@@ -4,7 +4,8 @@
 
 
 
-
+int ENERGY_DEMAND;
+int N_ATOMI_INIT;
 
 int main() {
 
@@ -23,7 +24,7 @@ int input_file(char * pathname) {
 	
 	lseek(file, 14, SEEK_CUR);
 	read(file, buf, 1);
-	N_ATOMS_INIT = atoi(buf);
+	N_ATOMI_INIT = atoi(buf);
 
 	close(file);	
 }
