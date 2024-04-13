@@ -16,25 +16,26 @@ int N_ATOMI_INIT;
 
 
 int input_file(char * pathname) {
-	int file = open(pathname, O_RDONLY);
+	FILE * file;
 
-	if(file == -1) { 
+	if((file = fopen(pathname, "r")) == NULL ) { 
 		perror("failed to open file!\n");
-		close(file);
+		fclose(file);
 		exit(EXIT_FAILURE);
 	}
 
-	lseek(file, 14, SEEK_SET);
-	char * buf = malloc(1);
-	read(file, buf, 1);
-	ENERGY_DEMAND = atoi(buf);
-	
-	lseek(file, 28, SEEK_CUR); /* PROVARE A FARE DI MEGLIO */
-	
-	read(file, buf, 1);
-	N_ATOMI_INIT = atoi(buf);
+	char buffer[100];
+	fseek(file, 14, SEEK_CUR);
+	fscanf(file, "%d", &ENERGY_DEMAND);
+	printf("%d\n", ENERGY_DEMAND);
+	while(fgets(buffer, sizeof(buffer), file) != NULL) {
+		fseek(file, 14, SEEK_CUR);
+		fscanf(file, "%d", &N_ATOMI_INIT);
+		printf("%d\n", N_ATOMI_INIT);
 
-	close(file);
+	}
+	
+	fclose(file);
 }
 
 int main() {
