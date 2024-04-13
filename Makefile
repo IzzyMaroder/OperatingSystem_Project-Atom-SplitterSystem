@@ -1,8 +1,9 @@
-m-all:
-    gcc Master.c Master.o -o master
+CC = gcc
+CFLAGS =  -Wvla -Wextra -Werror
 
 m-comp:
-   gcc -c Master.c
-
+	${CC} ${CFLAGS} -c Master.c
 m-obj:
-    gcc Master.o -o master
+	${CC} ${CFLAGS} Master.o -o master
+m-all:
+	${CC} ${CFLAGS} Master.c Master.o -o master
