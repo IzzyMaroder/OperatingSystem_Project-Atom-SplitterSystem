@@ -1,7 +1,3 @@
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -9,6 +5,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
 
 int ENERGY_DEMAND;
 int N_ATOMI_INIT;
@@ -28,10 +29,11 @@ int input_file(char * pathname) {
 	read(file, buf, 1);
 	ENERGY_DEMAND = atoi(buf);
 	
-	lseek(file, 28, SEEK_CUR);
+	lseek(file, 28, SEEK_CUR); /* PROVARE A FARE DI MEGLIO */
+	
 	read(file, buf, 1);
 	N_ATOMI_INIT = atoi(buf);
-	
+
 	close(file);
 }
 
