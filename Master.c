@@ -33,6 +33,25 @@ int input_file(char * pathname) {
 	close(file);
 }
 
+void atoms_create() {
+	int i, cpid;
+	for(i = 0; i < N_ATOMI_INIT;  i++) {
+		switch(cpid = fork()) {
+			case -1:
+				fprintf(stderr,"Error: failed to fork.\n");
+				exit(EXIT_FAILURE);
+			case 0:
+				if(excve("atomo", args, NULL) == -1) {
+					perror("Error: failed to launch 'atomo'.\n");
+					exit(EXIT_FAILURE);
+				}
+				break;
+			case default:
+				break;
+		}
+	}
+}
+
 int main() {
 	input_file("init_file.txt");
 }
