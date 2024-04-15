@@ -3,12 +3,12 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <unistd.h>
 
-#ifndef _GNU_SOURCE
+#define ATOMO_EXEC "./atomo"
 #define _GNU_SOURCE
-#endif
 
 
 int ENERGY_DEMAND;
@@ -34,24 +34,34 @@ int input_file(char * pathname) {
 }
 
 void atoms_create() {
-	int i, cpid;
+	int i, status;
+	pid_t * cpids;
+	char * args[] = {"c", "i", NULL};
+	cpids = malloc(sizeof(cpids)*N_ATOMI_INIT);
 	for(i = 0; i < N_ATOMI_INIT;  i++) {
-		switch(cpid = fork()) {
+		switch(cpids[i] = fork()) {
 			case -1:
 				fprintf(stderr,"Error: failed to fork.\n");
 				exit(EXIT_FAILURE);
 			case 0:
-				if(excve("atomo", args, NULL) == -1) {
+				if(execve(ATOMO_EXEC, args, NULL) == -1) {
 					perror("Error: failed to launch 'atomo'.\n");
 					exit(EXIT_FAILURE);
 				}
 				break;
-			case default:
+			default:
 				break;
 		}
 	}
+	while(wait(&status) != -1) {
+		printf("Figlio terminato correttamente.\n");
+
+	}
+	free(cpids);
+	exit(EXIT_SUCCESS);
 }
 
 int main() {
 	input_file("init_file.txt");
+	atoms_create();
 }
