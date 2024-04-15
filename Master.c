@@ -38,9 +38,11 @@ void atoms_create() {
 
 	cpids = malloc(sizeof(cpids)*N_ATOMI_INIT);
 	for(i = 0; i < N_ATOMI_INIT;  i++) {
+
 		n_atom_rand = rand()%N_ATOM_MAX+1;
 		sprintf(buf, "%d", n_atom_rand);
 		char * args[] = { "", buf, NULL };
+		
 		switch(cpids[i] = fork()) {
 			case -1:
 				fprintf(stderr,"Error: failed to fork.\n");
@@ -61,6 +63,8 @@ void atoms_create() {
 	free(cpids);
 	exit(EXIT_SUCCESS);
 }
+
+void start_simulation() {}
 
 int main() {
 	srand(getpid());
