@@ -2,11 +2,11 @@ CC = gcc
 CFLAGS =  -Wvla -Wextra -Werror
 
 m-comp-all:
-	${CC} ${CFLAGS} -c Master.c Atomo.c
+	${CC} ${CFLAGS} -c sharedmemory.c Master.c Atomo.c
 m-mcomp:
 	${CC} ${CFLAGS} -c Master.c
 m-obj:
-	${CC} ${CFLAGS} Master.o -o master
+	${CC} ${CFLAGS} Master.o sharedmemory.o -o master
 m-atom:
 	${CC} ${CFLAGS} -c Master.c Atomo.c
 m-objatom:
