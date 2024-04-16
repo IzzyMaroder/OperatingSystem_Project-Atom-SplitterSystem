@@ -6,6 +6,9 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include "sharedmemory.h"
 
 #define _GNU_SOURCE
 
@@ -64,10 +67,16 @@ void atoms_create() {
 	exit(EXIT_SUCCESS);
 }
 
-void start_simulation() {}
+void start_simulation() {
+	struct shm* shmemory;
+	shmemory = mem_init();
+	print_mem(shmemory);
+	atoms_create();
+	clean_mem(shmemory);
+}
 
 int main() {
 	srand(getpid());
 	input_file("init_file.txt");
-	atoms_create();
+	start_simulation();
 }
