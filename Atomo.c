@@ -12,5 +12,5 @@ int main(int argc, char * argv[]) {
     }
     
     N_ATOM_MAX = atoi(argv[1]);
-    printf("N_ATOM_MAX: %d\n", N_ATOM_MAX);
+    // printf("N_ATOM_MAX: %d\n", N_ATOM_MAX);
 }
