@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include "sharedmemory.h"
 
 struct shm* mem_init() {
@@ -22,7 +24,7 @@ struct shm* mem_init() {
 
     datap->CURRENT_ENERGY = 0;
 
-    datap->TOT_ACTIVATIONS = 0;
+    datap->TOT_ACTIVATIONS = 100;
     datap->ACTIVATIONS_PER_SEC = 0;
     
     datap->TOT_SCISSIONS = 0;
