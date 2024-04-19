@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -10,12 +12,12 @@
 #include <sys/shm.h>
 #include "sharedmemory.h"
 
-#define _GNU_SOURCE
-
+#define ATOMO_NAME "./atomo"
 
 int ENERGY_DEMAND;
 int N_ATOMI_INIT;
 int N_ATOM_MAX;
+struct shm *sharedmem;
 
 int input_file(char * pathname) {
 	int file;
@@ -34,24 +36,29 @@ int input_file(char * pathname) {
 }
 
 void atoms_create() {
-	int i, status;
-	int n_atom_rand;
-	char buf[20];
+	int i, status, n_atom_rand, memid;
+	char buf[20], memid_str[3*sizeof(memid)+1];
+	char * args[4] = { ATOMO_NAME };
 	pid_t * cpids;
 
 	cpids = malloc(sizeof(cpids)*N_ATOMI_INIT);
+	memid = sharedmem->memId;
+	sprintf(memid_str, "%d", memid);
+	// int memid =0;
+
 	for(i = 0; i < N_ATOMI_INIT;  i++) {
 
 		n_atom_rand = rand()%N_ATOM_MAX+1;
 		sprintf(buf, "%d", n_atom_rand);
-		char * args[] = { "", buf, NULL };
-		
+		args[1] = memid_str;
+		args[2] = buf;
+		args[3] = NULL;
 		switch(cpids[i] = fork()) {
 			case -1:
 				fprintf(stderr,"Error: failed to fork.\n");
 				exit(EXIT_FAILURE);
 			case 0:
-				if(execve("./atomo", args, NULL) == -1) {
+				if(execve(ATOMO_NAME, args, NULL) == -1) {
 					perror("Error: failed to launch 'atomo'.\n");
 					exit(EXIT_FAILURE);
 				}
@@ -68,11 +75,10 @@ void atoms_create() {
 }
 
 void start_simulation() {
-	struct shm* shmemory;
-	shmemory = mem_init();
-	print_mem(shmemory);
+	sharedmem = mem_init();
+	// print_mem(shmemory);
 	atoms_create();
-	clean_mem(shmemory);
+	clean_mem(sharedmem);
 }
 
 int main() {
