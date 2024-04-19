@@ -10,6 +10,6 @@ m-obj:
 m-atom:
 	${CC} ${CFLAGS} -c Master.c Atomo.c
 m-objatom:
-	${CC} ${CFLAGS} Atomo.o -o atomo
+	${CC} ${CFLAGS} Atomo.o sharedmemory.o -o atomo
 m-all:
 	${CC} ${CFLAGS} Master.c Master.o -o master
