@@ -20,6 +20,6 @@ struct shm {
     int memId;
 };
 
-struct shm* mem_init();
+// struct shm* mem_init();
 void print_mem(struct shm * datap);
 void clean_mem(struct shm * datap);
