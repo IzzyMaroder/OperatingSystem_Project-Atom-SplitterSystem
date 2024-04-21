@@ -12,7 +12,7 @@ int main(int argc,char *arvg[]){
     input_file("../init_file.txt");
 
     //allocate initial atoms array
-    pid_t * cpids =malloc(sizeof(pid_t) * N_ATOMI_INIT);
+    pid_t * cpids = malloc(sizeof(pid_t) * N_ATOMI_INIT);
     //start IPC facilities
     int mem_id = mem_init();
     int msg_id = msg_init();

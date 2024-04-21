@@ -27,6 +27,7 @@ int main(int argc, char * argv[]) {
     }
     // sops.sem_op = -1;
     // semop(atoi(argv[2]), &sops, 1);
+    int sem_id = sharedmem->semId;
     int msgId = sharedmem->msgId;
     msgq.mtype = 1;
     msgq.pid = getpid();
