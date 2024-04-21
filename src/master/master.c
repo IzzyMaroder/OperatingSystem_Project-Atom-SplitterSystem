@@ -76,8 +76,7 @@ int main(int argc,char *arvg[]){
 	}
     semctl(sem_id,0,SETVAL, 0);
     while(wait(&status) != -1) {
-		printf("activator terminato correttamente.\n");
-		printf("atomo terminato correttamente.\n");
+		printf("child terminato correttamente.\n");
 	}
     free(cpids);
 
