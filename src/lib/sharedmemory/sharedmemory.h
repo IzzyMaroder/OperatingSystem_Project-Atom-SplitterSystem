@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+
 struct shm {
     int CURRENT_ENERGY;
 
@@ -17,7 +22,11 @@ struct shm {
     int TOT_SCORIE;
     int SCORIE_PER_SEC;
     int ABSORBED_ENERGY;
+
     int memId;
+    int semId;
+    int msgId;
+
 };
 
 // struct shm* mem_init();

@@ -1,4 +1,4 @@
-struct msgbbufmio {
+struct msg {
 	long mtype;
     int pid;
 };
