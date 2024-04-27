@@ -1,6 +1,4 @@
 #include "master.h"
-#include <stdio.h>
-#include <sys/sem.h>
 
 #define ATOMO_NAME "./atomo"
 #define ACTIVATOR_NAME "./activator"
@@ -28,7 +26,7 @@ int main(int argc,char *arvg[]){
     shared->memId = mem_id;
     shared->msgId = msg_id;
     shared->semId = sem_id;
-
+    shared->min_atom = MIN_N_ATOMICO;
     //check for error
     semctl(sem_id,0, SETVAL, 1);
     //create initial processes
@@ -54,17 +52,14 @@ int main(int argc,char *arvg[]){
     }
     int n_atom_rand;
     char atom_rand[20];
-    char min_atom[20];
 
 	for(i = 0; i < N_ATOMI_INIT;  i++) {
 		n_atom_rand = rand()%N_ATOM_MAX+1;
 		sprintf(atom_rand, "%d", n_atom_rand);
-		sprintf(min_atom, "%ld", MIN_N_ATOMICO);
-        char * argq[5] = { ATOMO_NAME };
+        char * argq[4] = { ATOMO_NAME };
 		argq[1] = memid_str;
 		argq[2] = atom_rand;
-		argq[3] = min_atom;
-		argq[4] = NULL;
+		argq[3] = NULL;
 		switch(cpids[i] = fork()) {
 			case -1:
 				fprintf(stderr,"Error: failed to fork.\n");
