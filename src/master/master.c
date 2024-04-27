@@ -1,5 +1,6 @@
 #include "master.h"
 #include <stdio.h>
+#include <sys/sem.h>
 
 #define ATOMO_NAME "./atomo"
 #define ACTIVATOR_NAME "./activator"
@@ -52,15 +53,18 @@ int main(int argc,char *arvg[]){
             break;
     }
     int n_atom_rand;
-    char buf[20];
+    char atom_rand[20];
+    char min_atom[20];
 
 	for(i = 0; i < N_ATOMI_INIT;  i++) {
 		n_atom_rand = rand()%N_ATOM_MAX+1;
-		sprintf(buf, "%d", n_atom_rand);
-        char * argq[4] = { ATOMO_NAME };
+		sprintf(atom_rand, "%d", n_atom_rand);
+		sprintf(min_atom, "%ld", MIN_N_ATOMICO);
+        char * argq[5] = { ATOMO_NAME };
 		argq[1] = memid_str;
-		argq[2] = buf;
-		argq[3] = NULL;
+		argq[2] = atom_rand;
+		argq[3] = min_atom;
+		argq[4] = NULL;
 		switch(cpids[i] = fork()) {
 			case -1:
 				fprintf(stderr,"Error: failed to fork.\n");
@@ -78,6 +82,11 @@ int main(int argc,char *arvg[]){
     while(wait(&status) != -1) {
 		printf("child terminato correttamente.\n");
 	}
+
+    //creare funzione che cancella tutta la merda.
+    shmdt(shared);
+    shmctl( mem_id , IPC_RMID , NULL );
+    semctl(sem_id, 0, IPC_RMID);
     free(cpids);
 
 }
