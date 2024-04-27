@@ -6,9 +6,11 @@
 #include <unistd.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
+#include <sys/wait.h>
 #include <sys/msg.h>
 #include "../lib/sharedmemory/sharedmemory.h"
 #include "../lib/semaphore.h"
 #include "../lib/msgqueue.h"
 
 void signal_handler(int signum);
+void scission();

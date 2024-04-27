@@ -1,12 +1,14 @@
 #include "atomo.h"
+#define ATOMO_NAME "./atomo"
 
 long N_ATOM, MIN_N_ATOMICO;
 
+struct shm * sharedmem;
+
 int main(int argc, char * argv[]) {
-    struct shm * sharedmem;
     struct sembuf sops;
     struct msg msgq;
-    if(argc < 4) {
+    if(argc < 3) {
         fprintf(stderr, "Error: too/many arguments.\n");
         exit(EXIT_FAILURE);
     }
@@ -24,23 +26,64 @@ int main(int argc, char * argv[]) {
     msgq.pid = getpid();
     msgsnd(msgId, &msgq, sizeof(int), 0);
     N_ATOM = atoi(argv[2]);
+    printf("Il mio num. atomico (ATOMO PADRE): %ld\n", N_ATOM);
 
-    
+    MIN_N_ATOMICO = sharedmem->min_atom;
     sleep(1);
 }
 
 void signal_handler(int signum) {
     printf("Ho ricevuto il segnale, %d\n", getpid());
+    scission();
 }
 
-int scission() {
-    // int child_atom = fork();
-    int n_atom_child;
+/* questa funzione avvia il processo di scissione, calcolando il
+nuovo valore del numero atomico (N_ATOM). All'execve passo tre valori
+il valore del numero atomico per il figlio scisso e il valore della mem
+condivisa */
+
+void scission() {
+    int child_atom, child_status;
+    long n_atom_child;
+    char n_atom_child_ch[sizeof(int)];
+    char mem_str[3*sizeof(int)+1];
     if(N_ATOM % 2 == 0) {
         N_ATOM = N_ATOM/2;
         n_atom_child = N_ATOM;
+        printf("Il mio nuovo num. atomico (ATOMO PADRE): %ld\n", N_ATOM);
+        printf("Il mio nuovo num. atomico (ATOMO FIGLIO): %ld\n", n_atom_child);
     }else {
         N_ATOM = N_ATOM/2;
         n_atom_child = N_ATOM+1;
+        printf("Il mio nuovo num. atomico (ATOMO PADRE): %ld\n", N_ATOM);
+        printf("Il mio nuovo num. atomico (ATOMO FIGLIO): %ld\n", n_atom_child);
+
+    }
+    char * argp[4] = { ATOMO_NAME };
+    sprintf(n_atom_child_ch,"%ld", n_atom_child);
+    sprintf(mem_str, "%d", sharedmem->memId);
+    argp[1] = mem_str;
+    argp[2] = n_atom_child_ch;
+    argp[3] = NULL;
+    switch (child_atom = fork()) {
+        case -1:
+            fprintf(stderr,"Error: failed to fork.\n");
+            exit(EXIT_FAILURE);
+        case 0:
+            if(execve(ATOMO_NAME, argp, NULL) == -1) {
+                perror("(ATOMO) Error: failed to launch 'atomo'.\n");
+                exit(EXIT_FAILURE);
+            }
+        default:
+            break;
+    }
+
+    while(wait(&child_status) != -1) {
+		printf("child terminato correttamente (ATOMO SCISSO).\n");
+	}
+    
+    if(N_ATOM <= MIN_N_ATOMICO) {
+        printf("N_ATOM MINORE DI MIN_N_ATOMICO TERMINO.\n");
+        exit(EXIT_SUCCESS);
     }
 }
