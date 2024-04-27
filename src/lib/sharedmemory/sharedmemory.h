@@ -26,7 +26,7 @@ struct shm {
     int memId;
     int semId;
     int msgId;
-
+    long min_atom;
 };
 
 // struct shm* mem_init();
