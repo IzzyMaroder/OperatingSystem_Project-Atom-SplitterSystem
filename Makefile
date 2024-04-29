@@ -1,6 +1,8 @@
 CC = gcc
 CFLAGS =  -Wvla -Wextra -Werror
 
+default: activator atomo master
+
 obj: 
 	mkdir -p obj
 bin:

@@ -26,7 +26,9 @@ int main(int argc,char *arvg[]){
     shared->memId = mem_id;
     shared->msgId = msg_id;
     shared->semId = sem_id;
-    shared->min_atom = MIN_N_ATOMICO;
+    shared->conf_n_atomi_init = N_ATOMI_INIT;
+    shared->conf_min_atom = MIN_N_ATOMICO;
+    shared->conf_step_attivatore = STEP_ATTIVATORE;
     //check for error
     semctl(sem_id,0, SETVAL, 1);
     //create initial processes
