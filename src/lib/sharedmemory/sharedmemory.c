@@ -6,7 +6,3 @@ void print_mem(struct shm * datap) {
     printf("Total activations: %d\n", datap->TOT_ACTIVATIONS);
 
 }
-
-void clean_mem(struct shm * datap) {
-    shmdt(datap);
-}

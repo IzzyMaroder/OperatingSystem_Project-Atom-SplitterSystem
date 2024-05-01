@@ -1,5 +1,4 @@
 #include "atomo.h"
-#include <stdio.h>
 #define ATOMO_NAME "./atomo"
 
 long N_ATOM, MIN_N_ATOMICO;
@@ -14,6 +13,7 @@ int main(int argc, char * argv[]) {
     sigset_t mask;
     if(argc < 3) {
         fprintf(stderr, "Error: too/many arguments atomo.\n");
+        clean_all(atoi(argv[1]));
         exit(EXIT_FAILURE);
     }
     
@@ -26,6 +26,7 @@ int main(int argc, char * argv[]) {
     sharedmem = shmat(atoi(argv[1]), NULL, 0);
     if(sharedmem  == NULL) {
         fprintf(stderr, "Error: failed to attach memory in atomo.\n");
+        clean_all(sharedmem->memId);
         exit(EXIT_FAILURE);
     }
     int sem_id = sharedmem->semId;
@@ -81,6 +82,7 @@ void scission() {
         msgq.mtype = 2;
         if(msgsnd(sharedmem->msgId, &msgq, sizeof(int), 0) == -1) {
             printf("Error: in send atomic value.\n");
+            clean_all(sharedmem->memId);
             exit(EXIT_FAILURE);
         }
         termination();
@@ -88,28 +90,10 @@ void scission() {
 
     n_atom_child = rand() % ( N_ATOM - 1 )+ 1;
     N_ATOM-=n_atom_child;
+
     printf("Il mio nuovo num. atomico (ATOMO PADRE) PID: %d N_ATOMICO: %ld\n", getpid(), N_ATOM);
     printf("Il mio nuovo num. atomico (ATOMO FIGLIO) N_ATOMICO: %ld\n",n_atom_child);
     
-    // if(N_ATOM % 2 == 0) {
-    //     N_ATOM = N_ATOM/2;
-    //     n_atom_child = N_ATOM;
-    // }else {
-    //     if(N_ATOM <= MIN_N_ATOMICO) {
-    //         printf("N_ATOM MINORE_ O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
-    //         msgq.mtype = 2;
-    //         if(msgsnd(sharedmem->msgId, &msgq, sizeof(int), 0) == -1) {
-    //             printf("Error: in send atomic value.\n");
-    //             exit(EXIT_FAILURE);
-    //         }
-    //         exit(EXIT_SUCCESS);
-    //     }else {
-    //         N_ATOM = N_ATOM/2;
-    //         n_atom_child = N_ATOM+1;
-    //         printf("Il mio nuovo num. atomico (ATOMO PADRE): %ld\n", N_ATOM);
-    //         printf("Il mio nuovo num. atomico (ATOMO FIGLIO): %ld\n", n_atom_child);
-    //     }
-    // }
     char * argp[4] = { ATOMO_NAME };
     sprintf(n_atom_child_ch,"%ld", n_atom_child);
     sprintf(mem_str, "%d", sharedmem->memId);
@@ -119,10 +103,12 @@ void scission() {
     switch (child_atom = fork()) {
         case -1:
             fprintf(stderr,"Error: failed to fork.\n");
+            clean_all(sharedmem->memId);
             exit(EXIT_FAILURE);
         case 0:
             if(execve(ATOMO_NAME, argp, NULL) == -1) {
                 perror("(ATOMO) Error: failed to launch 'atomo'.\n");
+                clean_all(sharedmem->memId);
                 exit(EXIT_FAILURE);
             }
         default:

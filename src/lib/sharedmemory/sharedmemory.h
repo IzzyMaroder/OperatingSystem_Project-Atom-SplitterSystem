@@ -36,4 +36,3 @@ struct shm {
 
 // struct shm* mem_init();
 void print_mem(struct shm * datap);
-void clean_mem(struct shm * datap);

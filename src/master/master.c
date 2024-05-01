@@ -49,12 +49,14 @@ int main(){
         case 0:
             if(execve(ACTIVATOR_NAME, args, NULL) == -1) {
                 perror("Error: failed to launch 'activator'.\n");
+                clean_all(shared->memId);
                 exit(EXIT_FAILURE);
             }
             break;
         //error
         case -1:
             printf("Error: falied fork to create activator process");
+            clean_all(shared->memId);
             exit(EXIT_FAILURE);
         default:
             break;
@@ -69,6 +71,7 @@ int main(){
             printf("PROCESSO ALIMENTATORE, STARTING...");
             if(execve(ALIMENTATOR_NAME, arga, NULL) == -1) {
                 perror("Error: failed to launch 'alimentator'.\n");
+                clean_all(shared->memId);
                 exit(EXIT_FAILURE);
             }
             break;
@@ -76,6 +79,7 @@ int main(){
         case -1:
             printf("Error: falied fork to create alimentator process\n");
             printf("error: %s\n",strerror(errno));
+            clean_all(shared->memId);
             exit(EXIT_FAILURE);
         default:
             break;
@@ -91,11 +95,13 @@ int main(){
 		switch(cpids[i] = fork()) {
 			case -1:
 				fprintf(stderr,"Error: failed to fork.\n");
-				exit(EXIT_FAILURE);
+				clean_all(shared->memId);
+                exit(EXIT_FAILURE);
 			case 0:
 				if(execve(ATOMO_NAME, argq, NULL) == -1) {
 					perror("Error: failed to launch 'atomo'.\n");
-					exit(EXIT_FAILURE);
+					clean_all(shared->memId);
+                    exit(EXIT_FAILURE);
 				}
 			default:
 				break;
@@ -106,10 +112,7 @@ int main(){
 		printf("child terminato correttamente con status %d.\n",status);
 	}
 
-    //creare funzione che cancella tutta la merda.
-    shmdt(shared);
-    shmctl( mem_id , IPC_RMID , NULL );
-    semctl(sem_id, 0, IPC_RMID);
-    free(cpids);
 
+    clean_all(shared->memId);
+    free(cpids);
 }
