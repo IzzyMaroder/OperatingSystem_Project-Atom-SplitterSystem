@@ -41,7 +41,7 @@ int main(int argc, char * argv[]) {
 }
 
 void signal_handler(int signum) {
-    printf("Ho ricevuto il segnale, %d\n", getpid());
+    printf("Ho ricevuto il segnale SIGNUM: %d, PID: %d\n", signum, getpid());
     scission();
 }
 
