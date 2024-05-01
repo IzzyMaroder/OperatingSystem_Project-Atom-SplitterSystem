@@ -1,4 +1,3 @@
-#include <sys/wait.h>
 #define _GNU_SOURCE
 #include "activator.h"
 
