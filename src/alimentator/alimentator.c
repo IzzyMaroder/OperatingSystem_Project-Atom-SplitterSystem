@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 #include "../lib/sharedmemory/sharedmemory.h"
 
 #define ATOMO_NAME "./atomo"

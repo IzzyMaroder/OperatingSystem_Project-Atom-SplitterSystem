@@ -1,4 +1,5 @@
 #include "atomo.h"
+#include <stdio.h>
 #define ATOMO_NAME "./atomo"
 
 long N_ATOM, MIN_N_ATOMICO;
@@ -19,6 +20,9 @@ int main(int argc, char * argv[]) {
     if(signal(SIGUSR1, signal_handler) == SIG_ERR) {
         printf("NON posso.\n");
     }
+    if(signal(SIGTERM, signal_handler) == SIG_ERR) {
+        printf("NON posso.\n");
+    }
     sharedmem = shmat(atoi(argv[1]), NULL, 0);
     if(sharedmem  == NULL) {
         fprintf(stderr, "Error: failed to attach memory in atomo.\n");
@@ -36,46 +40,76 @@ int main(int argc, char * argv[]) {
     sigemptyset (&mask);
     sigaddset(&mask, SIGUSR1);
     sigprocmask(SIG_UNBLOCK, &mask, NULL);
-    pause();
-    exit(EXIT_SUCCESS);
+    while(1) {
+        pause();
+    }
 }
 
 void signal_handler(int signum) {
     printf("Ho ricevuto il segnale SIGNUM: %d, PID: %d\n", signum, getpid());
-    scission();
+    if(signum == 15) {
+        printf("receives sigterm\n");
+        termination();
+    }
+    if(signum == 10) {
+        scission();
+    }
 }
+
+void termination() {
+    int child_status;
+    while (wait(&child_status) != -1) {
+        printf("atom waited a child atom\n");
+    }
+    exit(EXIT_SUCCESS);
+}
+
 
 /* questa funzione avvia il processo di scissione, calcolando il
 nuovo valore del numero atomico (N_ATOM). All'execve passo tre valori
 il valore del numero atomico per il figlio scisso e il valore della mem
 condivisa */
-
 void scission() {
-    int child_atom, child_status, child_wait;
+    int child_atom, child_wait;
     long n_atom_child;
     char n_atom_child_ch[sizeof(int)];
     char mem_str[3*sizeof(int)+1];
-    if(N_ATOM % 2 == 0) {
-        N_ATOM = N_ATOM/2;
-        n_atom_child = N_ATOM;
-        printf("Il mio nuovo num. atomico (ATOMO PADRE): %ld\n", N_ATOM);
-        printf("Il mio nuovo num. atomico (ATOMO FIGLIO): %ld\n", n_atom_child);
-    }else {
-        if(N_ATOM <= MIN_N_ATOMICO) {
-            printf("N_ATOM MINORE_ O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
-            msgq.mtype = 2;
-            if(msgsnd(sharedmem->msgId, &msgq, sizeof(int), 0) == -1) {
-                printf("Error: in send atomic value.\n");
-                exit(EXIT_FAILURE);
-            }
-            exit(EXIT_SUCCESS);
-        }else {
-            N_ATOM = N_ATOM/2;
-            n_atom_child = N_ATOM+1;
-            printf("Il mio nuovo num. atomico (ATOMO PADRE): %ld\n", N_ATOM);
-            printf("Il mio nuovo num. atomico (ATOMO FIGLIO): %ld\n", n_atom_child);
+
+
+    if(N_ATOM <= MIN_N_ATOMICO) {
+        printf("N_ATOM MINORE O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
+        msgq.mtype = 2;
+        if(msgsnd(sharedmem->msgId, &msgq, sizeof(int), 0) == -1) {
+            printf("Error: in send atomic value.\n");
+            exit(EXIT_FAILURE);
         }
+        termination();
     }
+
+    n_atom_child = rand() % ( N_ATOM - 1 )+ 1;
+    N_ATOM-=n_atom_child;
+    printf("Il mio nuovo num. atomico (ATOMO PADRE) PID: %d N_ATOMICO: %ld\n", getpid(), N_ATOM);
+    printf("Il mio nuovo num. atomico (ATOMO FIGLIO) N_ATOMICO: %ld\n",n_atom_child);
+    
+    // if(N_ATOM % 2 == 0) {
+    //     N_ATOM = N_ATOM/2;
+    //     n_atom_child = N_ATOM;
+    // }else {
+    //     if(N_ATOM <= MIN_N_ATOMICO) {
+    //         printf("N_ATOM MINORE_ O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
+    //         msgq.mtype = 2;
+    //         if(msgsnd(sharedmem->msgId, &msgq, sizeof(int), 0) == -1) {
+    //             printf("Error: in send atomic value.\n");
+    //             exit(EXIT_FAILURE);
+    //         }
+    //         exit(EXIT_SUCCESS);
+    //     }else {
+    //         N_ATOM = N_ATOM/2;
+    //         n_atom_child = N_ATOM+1;
+    //         printf("Il mio nuovo num. atomico (ATOMO PADRE): %ld\n", N_ATOM);
+    //         printf("Il mio nuovo num. atomico (ATOMO FIGLIO): %ld\n", n_atom_child);
+    //     }
+    // }
     char * argp[4] = { ATOMO_NAME };
     sprintf(n_atom_child_ch,"%ld", n_atom_child);
     sprintf(mem_str, "%d", sharedmem->memId);
@@ -93,20 +127,5 @@ void scission() {
             }
         default:
             break;
-    }
-    
-    // while(wait(&child_status) != -1) {
-    //     printf("Termino l'atomo figlio.\n");
-
-    // }
-
-    if(N_ATOM <= MIN_N_ATOMICO) {
-        printf("N_ATOM MINORE O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
-        msgq.mtype = 2;
-        if(msgsnd(sharedmem->msgId, &msgq, sizeof(int), 0) == -1) {
-            printf("Error: in send atomic value.\n");
-            exit(EXIT_FAILURE);
-        }
-    }
-    
+    }    
 }
