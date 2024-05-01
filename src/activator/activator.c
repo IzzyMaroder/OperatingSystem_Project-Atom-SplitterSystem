@@ -6,21 +6,21 @@ struct shm *shmemory;
 struct msg msgqueu;
 struct timespec reqtime, retime;
 
-int main(int argc, char *argv[]) {
-  if (argc < 2) {
-    fprintf(stderr, "Error: too/many arguments.\n");
-    exit(EXIT_FAILURE);
-  }
-  srand(getpid());
-  shmemory = shmat(atoi(argv[1]), NULL, 0);
-  if (shmemory == NULL) {
-    fprintf(stderr, "Error: failed to attach memory in atomo.\n");
-    exit(EXIT_FAILURE);
-  }
-  N_ATOMI_INIT = shmemory->conf_n_atomi_init;
-  STEP_ATTIVATORE = shmemory->conf_step_attivatore;
-  // popolare array
-  do_scission();
+int main(int argc, char * argv[]) {
+    if(argc < 2) {
+        fprintf(stderr, "Error: too/many arguments activator.\n");
+        exit(EXIT_FAILURE);
+    }
+    srand(getpid());
+    shmemory = shmat(atoi(argv[1]), NULL, 0);
+    if(shmemory  == NULL) {
+        fprintf(stderr, "Error: failed to attach memory in atomo.\n");
+        exit(EXIT_FAILURE);
+    }
+    N_ATOMI_INIT = shmemory->conf_n_atomi_init;
+    STEP_ATTIVATORE = shmemory->conf_step_attivatore;
+    //popolare array
+    do_scission();
 }
 
 void do_scission() {

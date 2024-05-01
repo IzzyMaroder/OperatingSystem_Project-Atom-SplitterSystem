@@ -30,6 +30,8 @@ struct shm {
     long conf_min_atom;
     long conf_n_atomi_init;
     long conf_step_attivatore;
+    long conf_n_atom_max;
+    long conf_n_nuovi_atomi;
 };
 
 // struct shm* mem_init();
