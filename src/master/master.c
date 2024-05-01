@@ -20,7 +20,7 @@ int main(){
     int mem_id = mem_init();
     int msg_id = msg_init();
     int sem_id = sem_init(1);
-    char memid_str[3*sizeof(sem_id)+1];
+    char memid_str[3*sizeof(mem_id)+1];
     struct shm* shared = shmat(mem_id, NULL, 0);
     if(shared == NULL) {
         fprintf(stderr, "Error: failed to attach memory.\n");
@@ -39,11 +39,12 @@ int main(){
     semctl(sem_id,0, SETVAL, 1);
     //create initial processes
     int activator_pid,alimentator_pid;
-    char * arga[3] = { ACTIVATOR_NAME };
-    char * args[3] = {ALIMENTATOR_NAME};
+    char * args[3] = { ACTIVATOR_NAME };
+    char * arga[3] = {ALIMENTATOR_NAME};
     sprintf(memid_str, "%d", mem_id);
     args[1] = memid_str;
     arga[1] = memid_str;
+    printf("ARGA %d\n", mem_id);
     switch (activator_pid = fork()) {
         //child process
         case 0:
@@ -66,7 +67,7 @@ int main(){
         //child process
         case 0:
             printf("PROCESSO ALIMENTATORE, STARTING...");
-            if(execve(ALIMENTATOR_NAME, args, NULL) == -1) {
+            if(execve(ALIMENTATOR_NAME, arga, NULL) == -1) {
                 perror("Error: failed to launch 'alimentator'.\n");
                 exit(EXIT_FAILURE);
             }

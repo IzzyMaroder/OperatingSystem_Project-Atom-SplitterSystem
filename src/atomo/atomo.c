@@ -12,7 +12,7 @@ int main(int argc, char * argv[]) {
     int child_status = 1;
     sigset_t mask;
     if(argc < 3) {
-        fprintf(stderr, "Error: too/many arguments.\n");
+        fprintf(stderr, "Error: too/many arguments atomo.\n");
         exit(EXIT_FAILURE);
     }
     
