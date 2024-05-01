@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS =  -Wvla -Wextra -Werror
 
-default: activator atomo master
+default: activator atomo alimentator master
 
 obj: 
 	mkdir -p obj
@@ -12,6 +12,11 @@ activator: bin activator.o sharedmemory.o
 	${CC} ${CFLAGS} obj/activator.o obj/sharedmemory.o -o bin/activator
 activator.o: obj src/activator/activator.c
 	${CC} ${CFLAGS} -c src/activator/activator.c -o obj/activator.o
+
+alimentator: bin alimentator.o sharedmemory.o
+	${CC} ${CFLAGS} obj/alimentator.o obj/sharedmemory.o -o bin/alimentator
+alimentator.o:
+	${CC} ${CFLAGS} -c src/alimentator/alimentator.c -o obj/alimentator.o
 
 atomo: bin atomo.o sharedmemory.o
 	${CC} ${CFLAGS} obj/atomo.o obj/sharedmemory.o -o bin/atomo
