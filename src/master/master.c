@@ -62,24 +62,24 @@ int main(){
     int n_atom_rand;
     char atom_rand[20];
     
-    // switch (alimentator_pid = fork()) {
+    switch (alimentator_pid = fork()) {
 
-    //     //child process
-    //     case 0:
-    //         printf("PROCESSO ALIMENTATORE, STARTING...");
-    //         if(execve(ALIMENTATOR_NAME, arga, NULL) == -1) {
-    //             perror("Error: failed to launch 'alimentator'.\n");
-    //             exit(EXIT_FAILURE);
-    //         }
-    //         break;
-    //     //error
-    //     case -1:
-    //         printf("Error: falied fork to create alimentator process\n");
-    //         printf("error: %s\n",strerror(errno));
-    //         exit(EXIT_FAILURE);
-    //     default:
-    //         break;
-    // }
+        //child process
+        case 0:
+            printf("PROCESSO ALIMENTATORE, STARTING...");
+            if(execve(ALIMENTATOR_NAME, arga, NULL) == -1) {
+                perror("Error: failed to launch 'alimentator'.\n");
+                exit(EXIT_FAILURE);
+            }
+            break;
+        //error
+        case -1:
+            printf("Error: falied fork to create alimentator process\n");
+            printf("error: %s\n",strerror(errno));
+            exit(EXIT_FAILURE);
+        default:
+            break;
+    }
 
 	for(i = 0; i < N_ATOMI_INIT;  i++) {
 		n_atom_rand = rand()%N_ATOM_MAX+1;

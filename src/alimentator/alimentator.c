@@ -29,7 +29,6 @@ int main(int argc, char * argv[]){
     STEP_ATTIVATORE = sharedmem->conf_step_attivatore;
     N_ATOM_MAX = sharedmem->conf_n_atom_max;
     N_NUOVI_ATOMI = sharedmem->conf_n_nuovi_atomi;
-    printf("argv[1]: %d\nmem_id: %d\nSTEP ATTIVATORE: %ld\nN_ATOM_MAX:%ld\nN_NUOVI_ATOMI: %ld\n",atoi(argv[1]),mem_id,STEP_ATTIVATORE,N_ATOM_MAX,N_NUOVI_ATOMI);
     pid_t  *cpids_alim = malloc(sizeof(pid_t) * N_NUOVI_ATOMI);
     for (int i = 0; i<N_NUOVI_ATOMI; i++) {
         n_atom_rand = rand()%N_ATOM_MAX+1;
