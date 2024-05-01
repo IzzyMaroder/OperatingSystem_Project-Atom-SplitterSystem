@@ -5,7 +5,7 @@
 
 //Qui uso un long per tutto dato che i STEP devono per forza stare in un long
 
-int main(int argc,char *arvg[]){
+int main(){
     
     int status,i;
     srand(getpid());
