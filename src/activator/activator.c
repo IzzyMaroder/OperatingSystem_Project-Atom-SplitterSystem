@@ -8,7 +8,7 @@ struct timespec reqtime, retime;
 
 int main(int argc, char * argv[]) {
     if(argc < 2) {
-        fprintf(stderr, "Error: too/many arguments.\n");
+        fprintf(stderr, "Error: too/many arguments activator.\n");
         exit(EXIT_FAILURE);
     }
     srand(getpid());

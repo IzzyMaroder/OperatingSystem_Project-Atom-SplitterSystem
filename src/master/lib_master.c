@@ -6,7 +6,7 @@
 struct shm *shmemory;
 struct sembuf sops;
 struct msg msgq;
-long ENERGY_DEMAND, N_ATOMI_INIT, N_ATOM_MAX, MIN_N_ATOMICO, STEP_ATTIVATORE;
+long ENERGY_DEMAND, N_ATOMI_INIT, N_ATOM_MAX, MIN_N_ATOMICO, STEP_ATTIVATORE, N_NUOVI_ATOMI;
 
 void input_file(char * pathname) {
 	int file;
@@ -19,7 +19,7 @@ void input_file(char * pathname) {
 	}
 	char buffer[100];
 	while(read(file, &buffer, sizeof(buffer))) {
-		sscanf(buffer, "%*s %ld %*s %ld %*s %ld %*s %ld %*s %ld", &ENERGY_DEMAND, &N_ATOMI_INIT, &N_ATOM_MAX, &MIN_N_ATOMICO, &STEP_ATTIVATORE);
+		sscanf(buffer, "%*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld", &ENERGY_DEMAND, &N_ATOMI_INIT, &N_ATOM_MAX, &MIN_N_ATOMICO, &STEP_ATTIVATORE, &N_NUOVI_ATOMI);
 	}
 	close(file);
 }
