@@ -8,6 +8,10 @@ struct  msg msgqueu;
 struct timespec reqtime, retime;
 
 int main(int argc, char * argv[]) {
+    if(argc < 2) {
+        fprintf(stderr, "Error: too/many arguments.\n");
+        exit(EXIT_FAILURE);
+    }
     srand(getpid());
     shmemory = shmat(atoi(argv[1]), NULL, 0);
     if(shmemory  == NULL) {

@@ -6,6 +6,7 @@
 //Qui uso un long per tutto dato che i STEP devono per forza stare in un long
 
 int main(int argc,char *arvg[]){
+    
     int status,i;
     srand(getpid());
     input_file("../init_file.txt");
