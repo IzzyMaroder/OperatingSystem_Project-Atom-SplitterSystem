@@ -37,6 +37,7 @@ int main(int argc, char * argv[]) {
     sigaddset(&mask, SIGUSR1);
     sigprocmask(SIG_UNBLOCK, &mask, NULL);
     pause();
+    exit(EXIT_SUCCESS);
 }
 
 void signal_handler(int signum) {
@@ -94,6 +95,11 @@ void scission() {
             break;
     }
     
+    // while(wait(&child_status) != -1) {
+    //     printf("Termino l'atomo figlio.\n");
+
+    // }
+
     if(N_ATOM <= MIN_N_ATOMICO) {
         printf("N_ATOM MINORE O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
         msgq.mtype = 2;

@@ -62,12 +62,12 @@ void do_scission() {
         }
 
         if (dead == counter) {
+            printf("ATTIVATORE: HO FINITO.\n");
+            msgctl (msgId, IPC_RMID , NULL);
+            free(tuplepid);
             exit(EXIT_SUCCESS);
         }
     }
-
-    msgctl (msgId, IPC_RMID , NULL);
-    free(tuplepid);
 }
 
 
