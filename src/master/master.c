@@ -44,7 +44,6 @@ int main(){
     sprintf(memid_str, "%d", mem_id);
     args[1] = memid_str;
     arga[1] = memid_str;
-    printf("ARGA %d\n", mem_id);
     switch (activator_pid = fork()) {
         //child process
         case 0:

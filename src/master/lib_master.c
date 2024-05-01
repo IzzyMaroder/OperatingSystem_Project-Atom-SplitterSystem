@@ -21,7 +21,6 @@ void input_file(char * pathname) {
 	while(read(file, &buffer, sizeof(buffer))) {
 		sscanf(buffer, "%*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld", &ENERGY_DEMAND, &N_ATOMI_INIT, &N_ATOM_MAX, &MIN_N_ATOMICO, &STEP_ATTIVATORE, &N_NUOVI_ATOMI);
 	}
-	printf("%ld\n", N_NUOVI_ATOMI);
 	close(file);
 }
 
