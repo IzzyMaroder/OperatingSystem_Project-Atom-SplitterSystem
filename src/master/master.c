@@ -78,7 +78,7 @@ int main(){
 	}
     semctl(sem_id,0,SETVAL, 0);
     while(wait(&status) != -1) {
-		printf("child terminato correttamente.\n");
+		printf("child terminato correttamente con status %d.\n",status);
 	}
 
     //creare funzione che cancella tutta la merda.
