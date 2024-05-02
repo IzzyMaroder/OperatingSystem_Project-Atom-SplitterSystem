@@ -113,5 +113,19 @@ void scission() {
             }
         default:
             break;
-    }    
+    }
 }
+
+
+
+// void aa {
+//     struct sembuf sbuf =  {
+//         sem_num = 1; //ID sem. Indicizzato ad array
+//         sem_op = -1 //finchè non raggiunge questo o magg.
+//         sem_flg = 0;
+//     };
+//     semop(sem_id, &sbuf, 1);
+//     mem;
+//     sbuf.sem_op = 1;
+//     semop();
+// }

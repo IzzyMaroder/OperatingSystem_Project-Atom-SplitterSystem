@@ -32,6 +32,7 @@ struct shm {
     long conf_step_attivatore;
     long conf_n_atom_max;
     long conf_n_nuovi_atomi;
+    long conf_step_alimentatore;
 };
 
 // struct shm* mem_init();

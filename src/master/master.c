@@ -35,6 +35,7 @@ int main(){
     shared->conf_step_attivatore = STEP_ATTIVATORE;
     shared->conf_n_atom_max = N_ATOM_MAX;
     shared->conf_n_nuovi_atomi = N_NUOVI_ATOMI;
+    shared->conf_step_alimentatore = STEP_ALIMENTATORE;
     //check for error
     semctl(sem_id,0, SETVAL, 1);
     //create initial processes

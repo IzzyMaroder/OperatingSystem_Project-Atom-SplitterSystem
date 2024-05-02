@@ -1,12 +1,9 @@
 #include "master.h"
-#include <sys/ipc.h>
-#include <sys/sem.h>
-#include <stdio.h>
 
 struct shm *shmemory;
 struct sembuf sops;
 struct msg msgq;
-long ENERGY_DEMAND, N_ATOMI_INIT, N_ATOM_MAX, MIN_N_ATOMICO, STEP_ATTIVATORE, N_NUOVI_ATOMI;
+long ENERGY_DEMAND, N_ATOMI_INIT, N_ATOM_MAX, MIN_N_ATOMICO, STEP_ATTIVATORE, N_NUOVI_ATOMI, STEP_ALIMENTATORE;
 
 void input_file(char * pathname) {
 	int file;
@@ -17,11 +14,12 @@ void input_file(char * pathname) {
 		exit(EXIT_FAILURE);
 
 	}
-	char buffer[200];
+	char buffer[400];
 	while(read(file, &buffer, sizeof(buffer))) {
-		sscanf(buffer, "%*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld", &ENERGY_DEMAND, &N_ATOMI_INIT, &N_ATOM_MAX, &MIN_N_ATOMICO, &STEP_ATTIVATORE, &N_NUOVI_ATOMI);
+		sscanf(buffer, "%*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld", &ENERGY_DEMAND, &N_ATOMI_INIT, &N_ATOM_MAX, &MIN_N_ATOMICO, &STEP_ATTIVATORE, &N_NUOVI_ATOMI, &STEP_ALIMENTATORE);
 	}
 	close(file);
+
 }
 
 int mem_init() {

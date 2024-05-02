@@ -1,11 +1,10 @@
 #define _GNU_SOURCE
 #include "activator.h"
 
-long N_ATOMI_INIT, STEP_ATTIVATORE;
+long N_ATOMI_INIT;
 struct shm *shmemory;
 struct msg msgqueu;
 tuple *tuplepid;
-struct timespec reqtime, retime;
 
 int main(int argc, char * argv[]) {
     if(argc < 2) {
@@ -21,21 +20,18 @@ int main(int argc, char * argv[]) {
         exit(EXIT_FAILURE);
     }
     N_ATOMI_INIT = shmemory->conf_n_atomi_init;
-    STEP_ATTIVATORE = shmemory->conf_step_attivatore;
-    //popolare array
     do_scission();
 }
 
 void do_scission() {
   int msgId, atom, counter = 0, dead = 0;
   msgId = shmemory->msgId;
-  reqtime.tv_sec = 1;
-  reqtime.tv_nsec = STEP_ATTIVATORE;
   tuplepid = malloc(sizeof(tuple) * (shmemory->conf_n_atomi_init));
 
   while (1) {
-    // nanosleep(&reqtime , &retime);
-    sleep(1);
+
+    nsleep(shmemory->conf_step_attivatore);
+    
     if (msgrcv(msgId, &msgqueu, sizeof(int), 1, IPC_NOWAIT) != -1) {
       if(counter >= (N_ATOMI_INIT)) {
         N_ATOMI_INIT*=2;
@@ -53,7 +49,6 @@ void do_scission() {
       counter++;
       printf("COUNTER: %d\n", counter);
     }
-    reqtime = retime;
     if ((msgrcv(msgId, &msgqueu, sizeof(int), 2, IPC_NOWAIT) != -1)) {
       for (int i = 0; i < counter; i++) {
         if (tuplepid[i].pid == msgqueu.pid) {

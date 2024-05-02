@@ -11,3 +11,12 @@ void clean_all(int mem_id) {
     shmdt(shmemory);
     shmctl( mem_id, IPC_RMID , NULL);
 }
+
+void nsleep(long step) {
+    struct timespec reqtime, retime;
+    reqtime.tv_sec = 0;
+    reqtime.tv_nsec = step;
+    if((nanosleep(&reqtime , &retime) != 0) && errno == EINTR) {
+      reqtime = retime;
+    }
+}
