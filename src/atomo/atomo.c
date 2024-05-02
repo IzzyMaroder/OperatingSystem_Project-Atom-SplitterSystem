@@ -47,9 +47,8 @@ int main(int argc, char * argv[]) {
 }
 
 void signal_handler(int signum) {
-    printf("Ho ricevuto il segnale SIGNUM: %d, PID: %d\n", signum, getpid());
+    wait_mutex(sharedmem->semId, STATE_SEM);
     if(signum == 15) {
-        printf("receives sigterm\n");
         termination();
     }
     if(signum == 10) {
@@ -66,10 +65,6 @@ void termination() {
 }
 
 
-/* questa funzione avvia il processo di scissione, calcolando il
-nuovo valore del numero atomico (N_ATOM). All'execve passo tre valori
-il valore del numero atomico per il figlio scisso e il valore della mem
-condivisa */
 void scission() {
     int child_atom, child_wait;
     long n_atom_child;
@@ -85,6 +80,8 @@ void scission() {
             clean_all(sharedmem->memId);
             exit(EXIT_FAILURE);
         }
+        sharedmem->TOT_SCORIE++;
+        increment_sem(sharedmem->semId, STATE_SEM);
         termination();
     }
 
@@ -115,17 +112,3 @@ void scission() {
             break;
     }
 }
-
-
-
-// void aa {
-//     struct sembuf sbuf =  {
-//         sem_num = 1; //ID sem. Indicizzato ad array
-//         sem_op = -1 //finchè non raggiunge questo o magg.
-//         sem_flg = 0;
-//     };
-//     semop(sem_id, &sbuf, 1);
-//     mem;
-//     sbuf.sem_op = 1;
-//     semop();
-// }

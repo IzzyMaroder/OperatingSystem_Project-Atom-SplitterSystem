@@ -20,3 +20,17 @@ void nsleep(long step) {
       reqtime = retime;
     }
 }
+
+void wait_mutex(int sem_id, unsigned short sem_num) {
+  struct sembuf sops = {sem_num, -1, 0};
+  if(semop(sem_id, &sops, 1) == -1) {
+    printf("Error: Semaphore\n");
+  }
+}
+
+void increment_sem(int sem_id, unsigned short sem_num) {
+  struct sembuf sops = {sem_num, 1, 0};
+  if(semop(sem_id, &sops, 1) == -1) {
+    printf("Error: Semaphore\n");
+  }
+}

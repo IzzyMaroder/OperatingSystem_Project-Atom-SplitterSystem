@@ -19,7 +19,7 @@ int main(){
     //start IPC facilities
     int mem_id = mem_init();
     int msg_id = msg_init();
-    int sem_id = sem_init(1);
+    int sem_id = sem_init(2);
     char memid_str[3*sizeof(mem_id)+1];
     struct shm* shared = shmat(mem_id, NULL, 0);
     if(shared == NULL) {
