@@ -1,8 +1,8 @@
 #include "master.h"
 
-struct shm *shmemory;
-struct sembuf sops;
-struct msg msgq;
+// struct shmConf *shconfmem;
+// struct sembuf sops;
+// struct msg msgq;
 long ENERGY_DEMAND, N_ATOMI_INIT, N_ATOM_MAX, MIN_N_ATOMICO, STEP_ATTIVATORE, N_NUOVI_ATOMI, STEP_ALIMENTATORE;
 
 void input_file(char * pathname) {
@@ -23,7 +23,7 @@ void input_file(char * pathname) {
 }
 
 int mem_init() {
-    int memId = shmget(IPC_PRIVATE, sizeof(struct shm), 0600 | IPC_CREAT);
+    int memId = shmget(IPC_PRIVATE, sizeof(struct shmConf), 0600 | IPC_CREAT);
 
     if(memId == -1) {
         fprintf(stderr, "Error: failed to allocate memory.\n");

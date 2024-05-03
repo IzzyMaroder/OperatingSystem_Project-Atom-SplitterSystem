@@ -11,8 +11,8 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
-#include "../lib/sharedmemory/sharedmemory.h"
 #include "../lib/general_lib/general.h"
+#include "../lib/sharedmemory/sharedmemory.h"
 #include "../lib/msgqueue.h"
 
 

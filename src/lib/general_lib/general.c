@@ -1,8 +1,6 @@
-#include <unistd.h>
 #define _GNU_SOURCE
-#include "../sharedmemory/sharedmemory.h"
 #include "general.h"
-
+#include "../sharedmemory/sharedmemory.h"
 struct shmConf *shmemory;
 
 void clean_all(int mem_id) {
@@ -38,16 +36,13 @@ void increment_sem(int sem_id, unsigned short sem_num) {
 }
 
 
-void create_atoms(pid_t * cpids, char * memid_str) {
-  char atom_rand[20];
-  int i;
-  for(i = 0; i < shmemory->conf_n_atomi_init;  i++) {
-		sprintf(atom_rand, "%d", ((int)(rand()%shmemory->conf_n_atom_max+1)));
+void create_atoms(char * memid_str, char * a_rand) {
+    int cpids;
     char * argq[4] = { ATOMO_NAME };
 		argq[1] = memid_str;
-		argq[2] = atom_rand;
+		argq[2] = a_rand;
 		argq[3] = NULL;
-		switch(cpids[i] = fork()) {
+		switch(cpids = fork()) {
 			case -1:
 				fprintf(stderr,"Error: failed to fork.\n");
 				clean_all(shmemory->memId);
@@ -61,7 +56,6 @@ void create_atoms(pid_t * cpids, char * memid_str) {
 			default:
 				break;
 		}
-	}
 }
 
 void create_process(char * memid_str, char * name) {

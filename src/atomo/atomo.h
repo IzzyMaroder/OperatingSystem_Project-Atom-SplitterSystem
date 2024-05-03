@@ -10,9 +10,9 @@
 #include <sys/wait.h>
 #include <sys/msg.h>
 #include <errno.h>
-#include "../lib/sharedmemory/sharedmemory.h"
 #include "../lib/general_lib/general.h"
 #include "../lib/msgqueue.h"
+#include "../lib/sharedmemory/sharedmemory.h"
 
 void signal_handler(int signum);
 void scission();
