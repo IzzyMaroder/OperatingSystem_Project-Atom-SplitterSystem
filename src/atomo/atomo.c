@@ -47,7 +47,7 @@ int main(int argc, char * argv[]) {
 }
 
 void signal_handler(int signum) {
-    wait_mutex(sharedmem->semId, STATE_SEM);
+    // wait_mutex(sharedmem->semId, STATE_SEM);
     if(signum == 15) {
         termination();
     }

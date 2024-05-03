@@ -3,6 +3,19 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+struct shmConf {
+    int memId;
+    int semId;
+    int msgId;
+
+    long conf_min_atom;
+    long conf_n_atomi_init;
+    long conf_step_attivatore;
+    long conf_n_atom_max;
+    long conf_n_nuovi_atomi;
+    long conf_step_alimentatore;
+};
+
 struct shm {
     int CURRENT_ENERGY;
 

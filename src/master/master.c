@@ -1,13 +1,4 @@
 #include "master.h"
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
-
-#define ATOMO_NAME "./atomo"
-#define ACTIVATOR_NAME "./activator"
-#define ALIMENTATOR_NAME "./alimentator"
-
-//Qui uso un long per tutto dato che i STEP devono per forza stare in un long
 
 int main(){
     int status,i;
@@ -20,100 +11,44 @@ int main(){
     int mem_id = mem_init();
     int msg_id = msg_init();
     int sem_id = sem_init(2);
-    char memid_str[3*sizeof(mem_id)+1];
-    struct shm* shared = shmat(mem_id, NULL, 0);
-    if(shared == NULL) {
+    struct shmConf* shconfmemory = shmat(mem_id, NULL, 0);
+    if(shconfmemory == NULL) {
         fprintf(stderr, "Error: failed to attach memory.\n");
         exit(EXIT_FAILURE);
     }
 
-    shared->memId = mem_id;
-    shared->msgId = msg_id;
-    shared->semId = sem_id;
-    shared->conf_n_atomi_init = N_ATOMI_INIT;
-    shared->conf_min_atom = MIN_N_ATOMICO;
-    shared->conf_step_attivatore = STEP_ATTIVATORE;
-    shared->conf_n_atom_max = N_ATOM_MAX;
-    shared->conf_n_nuovi_atomi = N_NUOVI_ATOMI;
-    shared->conf_step_alimentatore = STEP_ALIMENTATORE;
+    shconfmemory->memId = mem_id;
+    shconfmemory->msgId = msg_id;
+    shconfmemory->semId = sem_id;
+    shconfmemory->conf_n_atomi_init = N_ATOMI_INIT;
+    shconfmemory->conf_min_atom = MIN_N_ATOMICO;
+    shconfmemory->conf_step_attivatore = STEP_ATTIVATORE;
+    shconfmemory->conf_n_atom_max = N_ATOM_MAX;
+    shconfmemory->conf_n_nuovi_atomi = N_NUOVI_ATOMI;
+    shconfmemory->conf_step_alimentatore = STEP_ALIMENTATORE;
     //check for error
     semctl(sem_id,0, SETVAL, 1);
-    //create initial processes
-    int activator_pid,alimentator_pid;
-    char * args[3] = { ACTIVATOR_NAME };
-    char * arga[3] = {ALIMENTATOR_NAME};
+
+
+    char memid_str[3*sizeof(shconfmemory->memId)+1];
     sprintf(memid_str, "%d", mem_id);
-    args[1] = memid_str;
-    arga[1] = memid_str;
-    switch (activator_pid = fork()) {
-        //child process
-        case 0:
-            if(execve(ACTIVATOR_NAME, args, NULL) == -1) {
-                perror("Error: failed to launch 'activator'.\n");
-                clean_all(shared->memId);
-                exit(EXIT_FAILURE);
-            }
-            break;
-        //error
-        case -1:
-            printf("Error: falied fork to create activator process");
-            clean_all(shared->memId);
-            exit(EXIT_FAILURE);
-        default:
-            break;
-    }
-    int n_atom_rand;
-    char atom_rand[20];
-    
-    switch (alimentator_pid = fork()) {
+ 
+    //Create activator process
+    create_process(memid_str, ACTIVATOR_NAME);
 
-        //child process
-        case 0:
-            printf("PROCESSO ALIMENTATORE, STARTING...");
-            if(execve(ALIMENTATOR_NAME, arga, NULL) == -1) {
-                perror("Error: failed to launch 'alimentator'.\n");
-                clean_all(shared->memId);
-                exit(EXIT_FAILURE);
-            }
-            break;
-        //error
-        case -1:
-            printf("Error: falied fork to create alimentator process\n");
-            printf("error: %s\n",strerror(errno));
-            clean_all(shared->memId);
-            exit(EXIT_FAILURE);
-        default:
-            break;
-    }
+    //Create alimentator process
+    create_process(memid_str, ALIMENTATOR_NAME);
 
-	for(i = 0; i < N_ATOMI_INIT;  i++) {
-		n_atom_rand = rand()%N_ATOM_MAX+1;
-		sprintf(atom_rand, "%d", n_atom_rand);
-        char * argq[4] = { ATOMO_NAME };
-		argq[1] = memid_str;
-		argq[2] = atom_rand;
-		argq[3] = NULL;
-		switch(cpids[i] = fork()) {
-			case -1:
-				fprintf(stderr,"Error: failed to fork.\n");
-				clean_all(shared->memId);
-                exit(EXIT_FAILURE);
-			case 0:
-				if(execve(ATOMO_NAME, argq, NULL) == -1) {
-					perror("Error: failed to launch 'atomo'.\n");
-					clean_all(shared->memId);
-                    exit(EXIT_FAILURE);
-				}
-			default:
-				break;
-		}
-	}
+    //Function to create atoms
+    create_atoms(cpids, memid_str);
+
+	
     semctl(sem_id,0,SETVAL, 0);
     while(wait(&status) != -1) {
 		printf("child terminato correttamente con status %d.\n",status);
 	}
 
 
-    clean_all(shared->memId);
+    clean_all(shconfmemory->memId);
     free(cpids);
 }
