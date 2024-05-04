@@ -17,4 +17,4 @@ void wait_mutex(int sem_id, unsigned short sem_num);
 void increment_sem(int sem_id, unsigned short sem_num);
 
 void create_atoms(char * memid_str, char * rand);
-void create_process(char * memid_str, char * name);
+int create_process(char * memid_str, char * name);

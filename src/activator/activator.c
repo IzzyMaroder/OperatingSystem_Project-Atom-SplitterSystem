@@ -16,7 +16,7 @@ int main(int argc, char * argv[]) {
     shconfmem = shmat(atoi(argv[1]), NULL, 0);
     if(shconfmem  == NULL) {
         fprintf(stderr, "Error: failed to attach memory in atomo.\n");
-        clean_all(shconfmem->memId);
+        clean_all(shconfmem->memconf_id);
         exit(EXIT_FAILURE);
     }
     N_ATOMI_INIT = shconfmem->conf_n_atomi_init;
@@ -36,11 +36,10 @@ void do_scission() {
       // printf("SONO QUI\n");
       if(counter >= (N_ATOMI_INIT)) {
         N_ATOMI_INIT*=2;
-        printf("N %ld\n", N_ATOMI_INIT);
         tuple *temp = realloc(tuplepid, N_ATOMI_INIT*sizeof(tuple));
         if(temp == NULL) {
           fprintf(stderr, "Error: cannot reallocate memory.\n");
-          clean_all(shconfmem->memId);
+          clean_all(shconfmem->memconf_id);
           exit(EXIT_FAILURE);
         }
         tuplepid = temp;
@@ -69,7 +68,7 @@ void do_scission() {
 
     if (dead == counter) {
         terminate(counter);
-        clean_all(shconfmem->memId);
+        clean_all(shconfmem->memconf_id);
         free(tuplepid);
         exit(EXIT_SUCCESS);
     }

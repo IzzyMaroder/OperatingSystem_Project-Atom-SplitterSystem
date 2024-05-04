@@ -4,7 +4,8 @@
 #include <sys/shm.h>
 
 struct shmConf {
-    int memId;
+    int memconf_id;
+    int memstat_id;
     int semId;
     int msgId;
 
@@ -16,7 +17,7 @@ struct shmConf {
     long conf_step_alimentatore;
 };
 
-struct shm {
+struct shmStat {
     int CURRENT_ENERGY;
 
     int TOT_ACTIVATIONS;
@@ -39,4 +40,3 @@ struct shm {
 };
 
 // struct shm* mem_init();
-void print_mem(struct shm * datap);

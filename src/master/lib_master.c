@@ -22,8 +22,8 @@ void input_file(char * pathname) {
 
 }
 
-int mem_init() {
-    int memId = shmget(IPC_PRIVATE, sizeof(struct shmConf), 0600 | IPC_CREAT);
+int mem_init(size_t size) {
+    int memId = shmget(IPC_PRIVATE, size, 0600 | IPC_CREAT);
 
     if(memId == -1) {
         fprintf(stderr, "Error: failed to allocate memory.\n");
@@ -56,3 +56,4 @@ int sem_init(int sem_num){
 
 	return sem_id;
 }
+

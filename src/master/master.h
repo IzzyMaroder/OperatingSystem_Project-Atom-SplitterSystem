@@ -20,7 +20,7 @@ extern long ENERGY_DEMAND, N_ATOMI_INIT, N_ATOM_MAX, MIN_N_ATOMICO, STEP_ATTIVAT
 
 
 void input_file(char * pathname);
-int mem_init();
+int mem_init(size_t size);
 int msg_init();
 void start_simulation();
 int sem_init(int sem_num);
