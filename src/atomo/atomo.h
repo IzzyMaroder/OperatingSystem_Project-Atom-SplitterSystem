@@ -3,4 +3,5 @@
 
 void signal_handler(int signum);
 void scission();
-void termination();
+void expiration();
+void waitchild();
