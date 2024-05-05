@@ -57,7 +57,9 @@ int sem_init(int sem_num){
 void print_stat(int sem_id) {
     wait_mutex(sem_id, STATE_SEM);
     printf("---------------------------------------------\n");
-    printf("SCORIE: %d\n",shmemory->stat.num_scorie);
+    printf("SCORIES: %d\n",shmemory->stat.num_scories);
+    printf("ENERGY PRODUCED: %d\n",shmemory->stat.energy_produced);
+    printf("NUMBER OF SCISSIONS: %d\n",shmemory->stat.num_scissions);
     // printf("SCORIE: %d\n",shstatmemory->TOT_ACTIVATIONS);
     increment_sem(sem_id, STATE_SEM);
 }

@@ -18,29 +18,11 @@ struct shmConf {
 };
 
 struct shmStat {
-    int CURRENT_ENERGY;
-
-    int TOT_ACTIVATIONS;
-    int ACTIVATIONS_PER_SEC;
-
-    int TOT_SCISSIONS;
-    int SCISSIONS_PER_SEC;
-
-    int TOT_PRODUCED_ENERGY;
-    int PRODUCED_ENERGY_PER_SEC;
-
-    int TOT_CONSUMED_ENERGY;
-    int CONSUMED_ENERGY_PER_SEC;
-
-
-    int num_scorie;
-    int ABSORBED_ENERGY;
-
+    int energy_demand, energy_produced, num_scories, num_scissions, 
+    num_activations, energy_consumed, energy_absorbed;
 };
 
 struct shm {
     struct shmStat stat;
     struct shmConf conf;
 };
-
-// struct shm* mem_init();

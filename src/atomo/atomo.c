@@ -42,6 +42,7 @@ int main(int argc, char * argv[]) {
 
 void signal_handler(int signum) {
     if(signum == SIGUSR1) {
+        wait_mutex(shmemory->conf.semId, STATE_SEM);
         (N_ATOM <= shmemory->conf.conf_min_atom) ? expiration() : scission();
     } else if(signum == SIGTERM) {
         waitchild();
@@ -56,8 +57,7 @@ void expiration() {
         clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     }
-    wait_mutex(shmemory->conf.semId, STATE_SEM);
-    shmemory->stat.num_scorie++;
+    shmemory->stat.num_scories++;
     increment_sem(shmemory->conf.semId, STATE_SEM);
     waitchild();
 }
@@ -79,6 +79,10 @@ void scission() {
     n_atom_child = rand() % ( N_ATOM - 1 )+ 1;
     N_ATOM-=n_atom_child;
 
+    int energy = N_ATOM * n_atom_child - ((N_ATOM > n_atom_child) ? N_ATOM : n_atom_child);
+    shmemory->stat.energy_produced+=energy;
+    shmemory->stat.num_scissions++;
+    increment_sem(shmemory->conf.semId, STATE_SEM);
     printf("Il mio nuovo num. atomico (ATOMO PADRE) PID: %d N_ATOMICO: %ld\n", getpid(), N_ATOM);
     printf("Il mio nuovo num. atomico (ATOMO FIGLIO) N_ATOMICO: %ld\n",n_atom_child);
     
