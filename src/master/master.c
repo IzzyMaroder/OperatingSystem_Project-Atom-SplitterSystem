@@ -35,35 +35,15 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    //start IPC facilities
-    shmemory->conf.memconf_id = mem_id;
-    shmemory->conf.msgId = msg_init();
-    shmemory->conf.semId = sem_init(2);
-    shmemory->conf.conf_n_atomi_init = N_ATOMI_INIT;
-    shmemory->conf.conf_min_atom = MIN_N_ATOMICO;
-    shmemory->conf.conf_step_attivatore = STEP_ATTIVATORE;
-    shmemory->conf.conf_n_atom_max = N_ATOM_MAX;
-    shmemory->conf.conf_n_nuovi_atomi = N_NUOVI_ATOMI;
-    shmemory->conf.conf_step_alimentatore = STEP_ALIMENTATORE;
+    confshm(mem_id);
 
     semctl(shmemory->conf.semId,0, SETVAL, 1);
     semctl(shmemory->conf.semId,1, SETVAL, 1);
     char memid_str[3*sizeof(shmemory->conf.memconf_id)+1];
     sprintf(memid_str, "%d", shmemory->conf.memconf_id);
  
-    //Create activator process
-    int activator_process = create_process(memid_str, ACTIVATOR_NAME);
-
-    //Create alimentator process
-    int alimentator_process = create_process(memid_str, ALIMENTATOR_NAME);
-
-    //Function to create atoms
-    for(int i  = 0; i < shmemory->conf.conf_n_atomi_init;  i++) {
-        char a_rand[20];
-		sprintf(a_rand, "%ld", (rand()%shmemory->conf.conf_n_atom_max+1) );
-        create_atoms(memid_str, a_rand);
-    }
-
+    simulation(memid_str);
+  
     semctl(shmemory->conf.semId,0,SETVAL, 0);
     //provare a mandare un seganale all'alimentatore dicendo di mettersi in wait dei figli
     //quando arriva in questo punto
@@ -81,4 +61,28 @@ int main() {
 	}
 
     clean_all(shmemory->conf.memconf_id);
+}
+
+void simulation(char * memid_str) {
+    int activator_process = create_process(memid_str, ACTIVATOR_NAME);
+    int alimentator_process = create_process(memid_str, ALIMENTATOR_NAME);
+
+    for(int i  = 0; i < shmemory->conf.conf_n_atomi_init;  i++) {
+        char a_rand[20];
+		sprintf(a_rand, "%ld", (rand()%shmemory->conf.conf_n_atom_max+1) );
+        create_atoms(memid_str, a_rand);
+    }
+}
+
+
+void confshm(int mem_id) {
+    shmemory->conf.memconf_id = mem_id;
+    shmemory->conf.msgId = msg_init();
+    shmemory->conf.semId = sem_init(2);
+    shmemory->conf.conf_n_atomi_init = N_ATOMI_INIT;
+    shmemory->conf.conf_min_atom = MIN_N_ATOMICO;
+    shmemory->conf.conf_step_attivatore = STEP_ATTIVATORE;
+    shmemory->conf.conf_n_atom_max = N_ATOM_MAX;
+    shmemory->conf.conf_n_nuovi_atomi = N_NUOVI_ATOMI;
+    shmemory->conf.conf_step_alimentatore = STEP_ALIMENTATORE;
 }
