@@ -7,4 +7,4 @@ typedef struct{
 } tuple;
 
 void do_scission();
-void terminate(int counter);
+void notifyatom(int counter);

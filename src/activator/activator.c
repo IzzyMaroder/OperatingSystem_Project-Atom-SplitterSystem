@@ -1,36 +1,34 @@
 #include "activator.h"
 
 long N_ATOMI_INIT;
-struct msg msgqueu;
 tuple *tuplepid;
 
 int main(int argc, char * argv[]) {
+    srand(getpid());
     if(argc < 2) {
         fprintf(stderr, "Error: too/many arguments activator.\n");
         clean_all(atoi(argv[1]));
         exit(EXIT_FAILURE);
     }
-    srand(getpid());
-    shmemory = shmat(atoi(argv[1]), NULL, 0);
-    if(shmemory  == NULL) {
+    if((shmemory = shmat(atoi(argv[1]), NULL, 0)) == NULL) {
         fprintf(stderr, "Error: failed to attach memory in atomo.\n");
         clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     }
+
     N_ATOMI_INIT = shmemory->conf.conf_n_atomi_init;
     do_scission();
 }
 
 void do_scission() {
-  int msgId, atom, counter = 0, dead = 0;
-  msgId = shmemory->conf.msgId;
+  struct msg msgqueu;
+  int atom, counter = 0, dead = 0;
   tuplepid = malloc(sizeof(tuple) * (shmemory->conf.conf_n_atomi_init));
 
   while (1) {
-
     nsleep(shmemory->conf.conf_step_attivatore);
     
-    if (msgrcv(msgId, &msgqueu, sizeof(int), 1, IPC_NOWAIT) != -1) {
+    if (msgrcv(shmemory->conf.msgId, &msgqueu, sizeof(int), 1, IPC_NOWAIT) != -1) {
       if(counter >= (N_ATOMI_INIT)) {
         N_ATOMI_INIT*=2;
         tuple *temp = realloc(tuplepid, N_ATOMI_INIT*sizeof(tuple));
@@ -47,7 +45,7 @@ void do_scission() {
       counter++;
       printf("COUNTER: %d\n", counter);
     }
-    if ((msgrcv(msgId, &msgqueu, sizeof(int), 2, IPC_NOWAIT) != -1)) {
+    if ((msgrcv(shmemory->conf.msgId, &msgqueu, sizeof(int), 2, IPC_NOWAIT) != -1)) {
       for (int i = 0; i < counter; i++) {
         if (tuplepid[i].pid == msgqueu.pid) {
           tuplepid[i].alive = false;
@@ -64,7 +62,7 @@ void do_scission() {
     }
 
     if (dead == counter) {
-        terminate(counter);
+        notifyatom(counter);
         clean_all(shmemory->conf.memconf_id);
         free(tuplepid);
         exit(EXIT_SUCCESS);
@@ -72,7 +70,7 @@ void do_scission() {
   }
 }
 
-void terminate(int counter) {
+void notifyatom(int counter) {
   for (int j = 0; j < counter; j++) {
     kill(tuplepid[j].pid, SIGTERM);
   }
