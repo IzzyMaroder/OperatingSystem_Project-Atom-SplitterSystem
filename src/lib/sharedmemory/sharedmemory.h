@@ -39,4 +39,9 @@ struct shmStat {
 
 };
 
+struct shm {
+    struct shmStat stat;
+    struct shmConf conf;
+};
+
 // struct shm* mem_init();

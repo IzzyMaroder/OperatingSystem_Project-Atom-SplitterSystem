@@ -1,13 +1,12 @@
-#define _GNU_SOURCE
-#include "general.h"
-#include "../sharedmemory/sharedmemory.h"
-struct shmConf *shmemory;
+#include "../../common.h"
+
+struct shm * shmemory;
 
 void clean_all(int mem_id) {
     shmemory = shmat(mem_id, NULL, 0);
 
-    msgctl(shmemory->msgId, IPC_RMID, NULL);
-    semctl(shmemory->semId, 0, IPC_RMID);
+    msgctl(shmemory->conf.msgId, IPC_RMID, NULL);
+    semctl(shmemory->conf.semId, 0, IPC_RMID);
     shmdt(shmemory);
     shmctl( mem_id, IPC_RMID , NULL);
 }
@@ -45,12 +44,12 @@ void create_atoms(char * memid_str, char * a_rand) {
 		switch(cpids = fork()) {
 			case -1:
 				fprintf(stderr,"Error: failed to fork.\n");
-				clean_all(shmemory->memconf_id);
+				clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
 			case 0:
 				if(execve(ATOMO_NAME, argq, NULL) == -1) {
 					perror("Error: failed to launch 'atomo'.\n");
-					clean_all(shmemory->memconf_id);
+					clean_all(shmemory->conf.memconf_id);
           exit(EXIT_FAILURE);
 				}
 			default:
@@ -66,13 +65,13 @@ int create_process(char * memid_str, char * name) {
     case 0:
         if(execve(name, args, NULL) == -1) {
             perror("Error: failed to launch PROCESS.\n");
-            clean_all(shmemory->memconf_id);
+            clean_all(shmemory->conf.memconf_id);
             exit(EXIT_FAILURE);
         }
         break;
     case -1:
         printf("Error: falied fork to create alimentator process\n");
-        clean_all(shmemory->memconf_id);
+        clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     default:
         break;

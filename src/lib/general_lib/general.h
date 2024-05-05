@@ -1,10 +1,4 @@
-#include <sys/shm.h>
-#include <sys/sem.h>
-#include <sys/msg.h>
-#include <time.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <unistd.h>
+
 
 #define STATE_SEM 1
 #define ATOMO_NAME "./atomo"

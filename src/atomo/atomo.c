@@ -2,8 +2,6 @@
 
 long N_ATOM, MIN_N_ATOMICO;
 
-struct shmConf * shconfmem;
-struct shmStat * shstatmem;
 struct msg msgq;
 struct sigaction sa;
 
@@ -21,25 +19,23 @@ int main(int argc, char * argv[]) {
         printf("NON posso.\n");
     }
     
-    shconfmem = shmat(atoi(argv[1]), NULL, 0);
-    if(shconfmem  == NULL) {
+    shmemory = shmat(atoi(argv[1]), NULL, 0);
+    if(shmemory  == NULL) {
         fprintf(stderr, "Error: failed to attach memory in atomo.\n");
-        clean_all(shconfmem->memconf_id);
+        clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     }
 
-    shstatmem = shmat(shconfmem->memstat_id, NULL, 0);
-
-    printf("SEM :%d\n",shconfmem->semId);
+    printf("SEM :%d\n",shmemory->conf.semId);
     msgq.mtype = 1;
     msgq.pid = getpid();
-    if(msgsnd(shconfmem->msgId, &msgq, sizeof(int), 0) == -1) {
+    if(msgsnd(shmemory->conf.msgId, &msgq, sizeof(int), 0) == -1) {
         printf("Error in msgsnd %d\n", errno);
     }
     N_ATOM = atoi(argv[2]);
     printf("Il mio num. atomico (ATOMO PADRE): %ld PID: %d\n", N_ATOM, getpid());
 
-    MIN_N_ATOMICO = shconfmem->conf_min_atom;
+    MIN_N_ATOMICO = shmemory->conf.conf_min_atom;
     sigemptyset (&mask);
     sigaddset(&mask, SIGUSR1);
     sigprocmask(SIG_UNBLOCK, &mask, NULL);
@@ -50,9 +46,9 @@ int main(int argc, char * argv[]) {
 
 void signal_handler(int signum) {
     if(signum == SIGUSR1) {
-        // wait_mutex(shconfmem->semId, STATE_SEM);
+        // wait_mutex(shmemory->conf.semId, STATE_SEM);
         // shstatmem->TOT_ACTIVATIONS++;
-        // increment_sem(shconfmem->semId, STATE_SEM);
+        // increment_sem(shmemory->conf.semId, STATE_SEM);
         scission();
     } else if(signum == SIGTERM) {
         termination();
@@ -76,14 +72,14 @@ void scission() {
     if(N_ATOM <= MIN_N_ATOMICO) {
         printf("N_ATOM MINORE O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
         msgq.mtype = 2;
-        if(msgsnd(shconfmem->msgId, &msgq, sizeof(int), 0) == -1) {
+        if(msgsnd(shmemory->conf.msgId, &msgq, sizeof(int), 0) == -1) {
             printf("Error: in send atomic value.\n");
-            clean_all(shconfmem->memconf_id);
+            clean_all(shmemory->conf.memconf_id);
             exit(EXIT_FAILURE);
         }
-        // wait_mutex(shconfmem->semId, STATE_SEM);
-        // shstatmem->TOT_SCORIE++;
-        // increment_sem(shconfmem->semId, STATE_SEM);
+        wait_mutex(shmemory->conf.semId, STATE_SEM);
+        shmemory->stat.TOT_SCORIE++;
+        increment_sem(shmemory->conf.semId, STATE_SEM);
         termination();
     }
 
@@ -94,7 +90,7 @@ void scission() {
     printf("Il mio nuovo num. atomico (ATOMO FIGLIO) N_ATOMICO: %ld\n",n_atom_child);
     
     sprintf(n_atom_child_ch,"%ld", n_atom_child);
-    sprintf(mem_str, "%d", shconfmem->memconf_id);
+    sprintf(mem_str, "%d", shmemory->conf.memconf_id);
 
     create_atoms(mem_str, n_atom_child_ch);
 }

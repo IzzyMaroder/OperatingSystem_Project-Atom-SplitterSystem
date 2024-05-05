@@ -1,8 +1,6 @@
-#define _GNU_SOURCE
 #include "activator.h"
 
 long N_ATOMI_INIT;
-struct shmConf *shconfmem;
 struct msg msgqueu;
 tuple *tuplepid;
 
@@ -13,33 +11,32 @@ int main(int argc, char * argv[]) {
         exit(EXIT_FAILURE);
     }
     srand(getpid());
-    shconfmem = shmat(atoi(argv[1]), NULL, 0);
-    if(shconfmem  == NULL) {
+    shmemory = shmat(atoi(argv[1]), NULL, 0);
+    if(shmemory  == NULL) {
         fprintf(stderr, "Error: failed to attach memory in atomo.\n");
-        clean_all(shconfmem->memconf_id);
+        clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     }
-    N_ATOMI_INIT = shconfmem->conf_n_atomi_init;
+    N_ATOMI_INIT = shmemory->conf.conf_n_atomi_init;
     do_scission();
 }
 
 void do_scission() {
   int msgId, atom, counter = 0, dead = 0;
-  msgId = shconfmem->msgId;
-  tuplepid = malloc(sizeof(tuple) * (shconfmem->conf_n_atomi_init));
+  msgId = shmemory->conf.msgId;
+  tuplepid = malloc(sizeof(tuple) * (shmemory->conf.conf_n_atomi_init));
 
   while (1) {
 
-    nsleep(shconfmem->conf_step_attivatore);
+    nsleep(shmemory->conf.conf_step_attivatore);
     
     if (msgrcv(msgId, &msgqueu, sizeof(int), 1, IPC_NOWAIT) != -1) {
-      // printf("SONO QUI\n");
       if(counter >= (N_ATOMI_INIT)) {
         N_ATOMI_INIT*=2;
         tuple *temp = realloc(tuplepid, N_ATOMI_INIT*sizeof(tuple));
         if(temp == NULL) {
           fprintf(stderr, "Error: cannot reallocate memory.\n");
-          clean_all(shconfmem->memconf_id);
+          clean_all(shmemory->conf.memconf_id);
           exit(EXIT_FAILURE);
         }
         tuplepid = temp;
@@ -68,7 +65,7 @@ void do_scission() {
 
     if (dead == counter) {
         terminate(counter);
-        clean_all(shconfmem->memconf_id);
+        clean_all(shmemory->conf.memconf_id);
         free(tuplepid);
         exit(EXIT_SUCCESS);
     }

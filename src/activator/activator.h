@@ -1,13 +1,4 @@
-#include <stdbool.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <sys/ipc.h>
-#include "../lib/sharedmemory/sharedmemory.h"
-#include "../lib/general_lib/general.h"
+#include "../common.h"
 #include "../lib/msgqueue.h"
 
 typedef struct{
