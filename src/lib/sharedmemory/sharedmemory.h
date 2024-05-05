@@ -33,7 +33,7 @@ struct shmStat {
     int CONSUMED_ENERGY_PER_SEC;
 
 
-    int TOT_SCORIE;
+    int num_scorie;
     int SCORIE_PER_SEC;
     int ABSORBED_ENERGY;
 

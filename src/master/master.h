@@ -9,6 +9,10 @@ extern long ENERGY_DEMAND, N_ATOMI_INIT, N_ATOM_MAX, MIN_N_ATOMICO, STEP_ATTIVAT
 void input_file(char * pathname);
 int mem_init();
 int msg_init();
-void simulation(char * memid_str);
 int sem_init(int sem_num);
+
+void print_stat(int sem_id);
+void simulation(char * memid_str);
 void confshm(int mem_id);
+void waitprocess();
+void termination();

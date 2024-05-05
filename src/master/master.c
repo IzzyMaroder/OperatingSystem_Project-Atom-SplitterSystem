@@ -2,26 +2,11 @@
 
 int count_alarm;
 
-// void print_stat(int sem_id) {
-//     wait_mutex(sem_id, STATE_SEM);
-//     printf("SCORIE: %d\n",shstatmemory->TOT_SCORIE);
-//     // printf("SCORIE: %d\n",shstatmemory->TOT_ACTIVATIONS);
-//     increment_sem(sem_id, STATE_SEM);
-//     alarm(1);
-// }
-
-// void signal_handler() {
-//     count_alarm++;
-//     print_stat(shmemory->semId);
-//     if(count_alarm  >= 4) {
-        // while(wait(NULL) > 0) {
-		//     printf("child terminato correttamente.\n");
-	    // }
-//         exit(EXIT_SUCCESS);
-//     }
-// }
-
-
+void signal_handler() {
+    count_alarm++;
+    termination();
+    alarm(1);
+}
 
 int main() {
     int status;
@@ -39,6 +24,7 @@ int main() {
 
     semctl(shmemory->conf.semId,0, SETVAL, 1);
     semctl(shmemory->conf.semId,1, SETVAL, 1);
+
     char memid_str[3*sizeof(shmemory->conf.memconf_id)+1];
     sprintf(memid_str, "%d", shmemory->conf.memconf_id);
  
@@ -48,19 +34,13 @@ int main() {
     //provare a mandare un seganale all'alimentatore dicendo di mettersi in wait dei figli
     //quando arriva in questo punto
 
+    signal(SIGALRM, signal_handler);
+    alarm(1);
 
-    // signal(SIGALRM, signal_handler);
-    // alarm(1);
-    // print_stat(shmemory->conf.semId);
-    // while(1) {
-    //     pause();
-    // }
+    while(1) {
+        pause();
+    }
     
-    while(wait(NULL) > 0) {
-		printf("child terminato correttamente.\n");
-	}
-
-    clean_all(shmemory->conf.memconf_id);
 }
 
 void simulation(char * memid_str) {
@@ -85,4 +65,22 @@ void confshm(int mem_id) {
     shmemory->conf.conf_n_atom_max = N_ATOM_MAX;
     shmemory->conf.conf_n_nuovi_atomi = N_NUOVI_ATOMI;
     shmemory->conf.conf_step_alimentatore = STEP_ALIMENTATORE;
+}
+
+void waitprocess() {
+    int status;
+    while (wait(&status) != -1) {
+        printf("Child terminated correctly\n");
+    }
+}
+
+void termination() {
+    if(count_alarm >= 6) {
+        waitprocess();
+        printf("------------------ TIMEOUT ");
+        print_stat(shmemory->conf.semId);
+        clean_all(shmemory->conf.memconf_id);
+        exit(EXIT_SUCCESS);
+    }
+    print_stat(shmemory->conf.semId);
 }

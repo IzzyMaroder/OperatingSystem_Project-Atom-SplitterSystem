@@ -57,7 +57,7 @@ void expiration() {
         exit(EXIT_FAILURE);
     }
     wait_mutex(shmemory->conf.semId, STATE_SEM);
-    shmemory->stat.TOT_SCORIE++;
+    shmemory->stat.num_scorie++;
     increment_sem(shmemory->conf.semId, STATE_SEM);
     waitchild();
 }

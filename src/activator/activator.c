@@ -63,7 +63,6 @@ void do_scission() {
 
     if (dead == counter) {
         notifyatom(counter);
-        clean_all(shmemory->conf.memconf_id);
         free(tuplepid);
         exit(EXIT_SUCCESS);
     }
