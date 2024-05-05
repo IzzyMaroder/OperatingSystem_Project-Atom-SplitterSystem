@@ -1,6 +1,6 @@
 #include "master.h"
 
-long ENERGY_DEMAND, N_ATOMI_INIT, N_ATOM_MAX, MIN_N_ATOMICO, STEP_ATTIVATORE, N_NUOVI_ATOMI, STEP_ALIMENTATORE;
+long ENERGY_DEMAND, N_ATOMI_INIT, N_ATOM_MAX, MIN_N_ATOMICO, STEP_ATTIVATORE, N_NUOVI_ATOMI, STEP_ALIMENTATORE, SIM_DURATION, ENERGY_EXPLODE_THRESHOLD;
 
 void input_file(char * pathname) {
 	int file;
@@ -11,9 +11,9 @@ void input_file(char * pathname) {
 		exit(EXIT_FAILURE);
 
 	}
-	char buffer[400];
+	char buffer[600];
 	while(read(file, &buffer, sizeof(buffer))) {
-		sscanf(buffer, "%*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld", &ENERGY_DEMAND, &N_ATOMI_INIT, &N_ATOM_MAX, &MIN_N_ATOMICO, &STEP_ATTIVATORE, &N_NUOVI_ATOMI, &STEP_ALIMENTATORE);
+		sscanf(buffer, "%*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld %*s %ld", &ENERGY_DEMAND, &N_ATOMI_INIT, &N_ATOM_MAX, &MIN_N_ATOMICO, &STEP_ATTIVATORE, &N_NUOVI_ATOMI, &STEP_ALIMENTATORE, &SIM_DURATION, &ENERGY_EXPLODE_THRESHOLD);
 	}
 	close(file);
 
