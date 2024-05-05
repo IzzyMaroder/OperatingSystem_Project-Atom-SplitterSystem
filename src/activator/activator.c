@@ -4,9 +4,9 @@ long N_ATOMI_INIT;
 int counter = 0;
 tuple *tuplepid;
 
-// void signal_handler() {
-//   notifyatom(counter);
-// }
+void signal_handler() {
+  notifyatom(counter);
+}
 
 int main(int argc, char * argv[]) {
     srand(getpid());
@@ -20,7 +20,7 @@ int main(int argc, char * argv[]) {
         clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     }
-    // signal(SIGTERM, signal_handler);
+    signal(SIGTERM, signal_handler);
     N_ATOMI_INIT = shmemory->conf.conf_n_atomi_init;
     do_scission();
 }
@@ -75,6 +75,7 @@ void do_scission() {
 }
 
 void notifyatom(int counter) {
+  int status;
   for (int j = 0; j < counter; j++) {
     kill(tuplepid[j].pid, SIGTERM);
   }
