@@ -14,5 +14,5 @@ int sem_init(int sem_num);
 void print_stat(int sem_id);
 void simulation(char * memid_str);
 void confshm(int mem_id);
-void waitprocess();
+void waitprocess(int process);
 void termination();

@@ -1,6 +1,6 @@
 #include "master.h"
 
-int count_alarm;
+int count_alarm, alimentator_process, activator_process;
 
 void signal_handler() {
     count_alarm++;
@@ -9,7 +9,6 @@ void signal_handler() {
 }
 
 int main() {
-    int status;
     srand(getpid());
     input_file("../init_file.txt");
 
@@ -23,7 +22,6 @@ int main() {
     confshm(mem_id);
 
     semctl(shmemory->conf.semId,0, SETVAL, 1);
-    semctl(shmemory->conf.semId,1, SETVAL, 1);
 
     char memid_str[3*sizeof(shmemory->conf.memconf_id)+1];
     sprintf(memid_str, "%d", shmemory->conf.memconf_id);
@@ -44,8 +42,10 @@ int main() {
 }
 
 void simulation(char * memid_str) {
-    int activator_process = create_process(memid_str, ACTIVATOR_NAME);
-    int alimentator_process = create_process(memid_str, ALIMENTATOR_NAME);
+    semctl(shmemory->conf.semId,1, SETVAL, 1);
+
+    activator_process = create_process(memid_str, ACTIVATOR_NAME);
+    alimentator_process = create_process(memid_str, ALIMENTATOR_NAME);
 
     for(int i  = 0; i < shmemory->conf.conf_n_atomi_init;  i++) {
         char a_rand[20];
@@ -67,16 +67,9 @@ void confshm(int mem_id) {
     shmemory->conf.conf_step_alimentatore = STEP_ALIMENTATORE;
 }
 
-void waitprocess() {
-    int status;
-    while (wait(&status) != -1) {
-        printf("Child terminated correctly\n");
-    }
-}
-
 void termination() {
-    if(count_alarm >= 6) {
-        waitprocess();
+    if(count_alarm >= SIM_DURATION) {
+        waitprocess(alimentator_process);
         printf("------------------ TIMEOUT ");
         print_stat(shmemory->conf.semId);
         clean_all(shmemory->conf.memconf_id);

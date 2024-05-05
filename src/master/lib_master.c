@@ -61,3 +61,11 @@ void print_stat(int sem_id) {
     // printf("SCORIE: %d\n",shstatmemory->TOT_ACTIVATIONS);
     increment_sem(sem_id, STATE_SEM);
 }
+
+void waitprocess(int process) {
+    int status;
+    kill(process ,SIGTERM);
+    while (wait(&status) != -1) {
+        printf("Child terminated correctly\n");
+    }
+}
