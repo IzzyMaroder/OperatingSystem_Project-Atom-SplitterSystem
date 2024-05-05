@@ -3,9 +3,10 @@
 int count_alarm, alimentator_process, activator_process;
 
 void signal_handler() {
-    count_alarm++;
+    wait_mutex(shmemory->conf.semId, STATE_SEM);
+    master_op();
+    increment_sem(shmemory->conf.semId, STATE_SEM);
     termination();
-    alarm(1);
 }
 
 int main() {
@@ -65,15 +66,37 @@ void confshm(int mem_id) {
     shmemory->conf.conf_n_atom_max = N_ATOM_MAX;
     shmemory->conf.conf_n_nuovi_atomi = N_NUOVI_ATOMI;
     shmemory->conf.conf_step_alimentatore = STEP_ALIMENTATORE;
+    shmemory->conf.energy_demand = ENERGY_DEMAND;
+}
+
+void master_op() {
+    printstat(shmemory->conf.semId);
+    count_alarm++;
+    shmemory->stat.energy_consumed+=shmemory->conf.energy_demand;
+    count_alarm++;
+    alarm(1);
 }
 
 void termination() {
     if(count_alarm >= SIM_DURATION) {
         waitprocess(alimentator_process);
         printf("------------------ TIMEOUT ");
-        print_stat(shmemory->conf.semId);
+        printstat(shmemory->conf.semId);
+        clean_all(shmemory->conf.memconf_id);
+        exit(EXIT_SUCCESS);
+
+    } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
+        waitprocess(alimentator_process);
+        printf("------------------ BLACKOUT ");
+        printstat(shmemory->conf.semId);
         clean_all(shmemory->conf.memconf_id);
         exit(EXIT_SUCCESS);
     }
-    print_stat(shmemory->conf.semId);
+    // } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
+    //     waitprocess(alimentator_process);
+    //     printf("------------------ EXPLODE ");
+    //     printstat(shmemory->conf.semId);
+    //     clean_all(shmemory->conf.memconf_id);
+    //     exit(EXIT_SUCCESS);
+    // }
 }

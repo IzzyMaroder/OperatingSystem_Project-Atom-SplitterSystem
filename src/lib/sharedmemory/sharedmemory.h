@@ -8,8 +8,8 @@ struct shmConf {
     int memstat_id;
     int semId;
     int msgId;
-
-    long conf_min_atom;
+    
+    long conf_min_atom, energy_demand;
     long conf_n_atomi_init;
     long conf_step_attivatore;
     long conf_n_atom_max;
@@ -18,7 +18,7 @@ struct shmConf {
 };
 
 struct shmStat {
-    int energy_demand, energy_produced, num_scories, num_scissions, 
+    int energy_produced, num_scories, num_scissions, 
     num_activations, energy_consumed, energy_absorbed;
 };
 

@@ -54,14 +54,13 @@ int sem_init(int sem_num){
 	return sem_id;
 }
 
-void print_stat(int sem_id) {
-    wait_mutex(sem_id, STATE_SEM);
+void printstat(int sem_id) {
+    // wait_mutex(sem_id, STATE_SEM);
     printf("---------------------------------------------\n");
     printf("SCORIES: %d\n",shmemory->stat.num_scories);
     printf("ENERGY PRODUCED: %d\n",shmemory->stat.energy_produced);
     printf("NUMBER OF SCISSIONS: %d\n",shmemory->stat.num_scissions);
-    // printf("SCORIE: %d\n",shstatmemory->TOT_ACTIVATIONS);
-    increment_sem(sem_id, STATE_SEM);
+    // increment_sem(sem_id, STATE_SEM);
 }
 
 void waitprocess(int process) {
