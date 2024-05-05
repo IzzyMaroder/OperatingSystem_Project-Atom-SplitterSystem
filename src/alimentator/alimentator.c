@@ -3,9 +3,6 @@
 int activator_pid;
 
 int main(int argc, char * argv[]){
-    int i, status;
-    char a_rand[20], memid_str[3*sizeof(int)+1];;
-    
     if(argc < 2) {
         fprintf(stderr, "Error: too/many arguments alimentator.\n");
         exit(EXIT_FAILURE);
@@ -16,7 +13,16 @@ int main(int argc, char * argv[]){
         fprintf(stderr, "Error: failed to attach memory in atomo.\n");
         exit(EXIT_FAILURE);
     }
-    
+
+    insert();
+
+    exit(EXIT_SUCCESS);
+}
+
+void insert() {
+    int i, status;
+    char a_rand[20], memid_str[3*sizeof(int)+1];
+
     while(1) {
         nsleep(shmemory->conf.conf_step_alimentatore);
         for (i = 0; i < shmemory->conf.conf_n_nuovi_atomi; i++) {
@@ -33,5 +39,4 @@ int main(int argc, char * argv[]){
             exit(EXIT_SUCCESS);
         }
     }
-    exit(EXIT_SUCCESS);
 }
