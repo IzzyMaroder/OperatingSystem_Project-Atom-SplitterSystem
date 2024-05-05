@@ -1,7 +1,12 @@
 #include "activator.h"
 
 long N_ATOMI_INIT;
+int counter = 0;
 tuple *tuplepid;
+
+// void signal_handler() {
+//   notifyatom(counter);
+// }
 
 int main(int argc, char * argv[]) {
     srand(getpid());
@@ -15,14 +20,14 @@ int main(int argc, char * argv[]) {
         clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     }
-
+    // signal(SIGTERM, signal_handler);
     N_ATOMI_INIT = shmemory->conf.conf_n_atomi_init;
     do_scission();
 }
 
 void do_scission() {
   struct msg msgqueu;
-  int atom, counter = 0, dead = 0;
+  int atom, dead = 0;
   tuplepid = malloc(sizeof(tuple) * (shmemory->conf.conf_n_atomi_init));
 
   while (1) {

@@ -80,13 +80,15 @@ void master_op() {
 void termination() {
     if(count_alarm >= SIM_DURATION) {
         waitprocess(alimentator_process);
+        // waitprocess(activator_process);
         printf("------------------ TIMEOUT ");
         printstat(shmemory->conf.semId);
         clean_all(shmemory->conf.memconf_id);
         exit(EXIT_SUCCESS);
-
+        
     } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
         waitprocess(alimentator_process);
+        waitprocess(activator_process);
         printf("------------------ BLACKOUT ");
         printstat(shmemory->conf.semId);
         clean_all(shmemory->conf.memconf_id);
