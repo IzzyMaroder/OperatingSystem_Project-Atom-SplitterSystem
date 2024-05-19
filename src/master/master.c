@@ -1,12 +1,25 @@
 #include "master.h"
 
+
 int count_alarm, alimentator_process, activator_process;
 
 void signal_handler() {
     wait_mutex(shmemory->conf.semId, STATE_SEM);
     master_op();
+
+    if(count_alarm >= SIM_DURATION) {
+        termination(1);
+        return;
+
+    // } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
+    //     printf("SONO QUI\n");
+    //     termination(2);
+    //     return;
+    } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed > ENERGY_EXPLODE_THRESHOLD) {
+        termination(3);
+        return;
+    }
     increment_sem(shmemory->conf.semId, STATE_SEM);
-    termination();
 }
 
 int main() {
@@ -29,17 +42,14 @@ int main() {
  
     simulation(memid_str);
   
-    semctl(shmemory->conf.semId,0,SETVAL, 0);
-    //provare a mandare un seganale all'alimentatore dicendo di mettersi in wait dei figli
-    //quando arriva in questo punto
-
-    signal(SIGALRM, signal_handler);
     alarm(1);
+    signal(SIGALRM, signal_handler);
+    semctl(shmemory->conf.semId,0,SETVAL, 0);
 
     while(1) {
         pause();
     }
-    
+    printf("CIAOOO\n");
 }
 
 void simulation(char * memid_str) {
@@ -73,33 +83,58 @@ void master_op() {
     printstat(shmemory->conf.semId);
     count_alarm++;
     shmemory->stat.energy_consumed+=shmemory->conf.energy_demand;
-    count_alarm++;
     alarm(1);
 }
 
-void termination() {
-    if(count_alarm >= SIM_DURATION) {
-        waitprocess(alimentator_process);
-        waitprocess(activator_process);
-        printf("------------------ TIMEOUT ");
-        printstat(shmemory->conf.semId);
-        clean_all(shmemory->conf.memconf_id);
-        exit(EXIT_SUCCESS);
+// void check_for_termination() {
+//     if(count_alarm >= SIM_DURATION) {
+//         termination(1);
+//         return;
 
-    } 
-    // else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
-    //     waitprocess(alimentator_process);
-    //     waitprocess(activator_process);
-    //     printf("------------------ BLACKOUT ");
-    //     printstat(shmemory->conf.semId);
-    //     clean_all(shmemory->conf.memconf_id);
-    //     exit(EXIT_SUCCESS);
+//     // } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
+//     //     printf("SONO QUI\n");
+//     //     termination(2);
+//     //     return;
+
+//     } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed > ENERGY_EXPLODE_THRESHOLD) {
+//         termination(3);
+//         return;
+//     }
+// }
+
+void termination(int term) {
+    int status;
+    switch (term) {
+        case 1:
+            printf("------------------ TIMEOUT ");
+            printf("current duration is %d\nSimulation terimated due to timeout\n",
+               count_alarm);
+            break;
+        case 2:
+            printf("------------------ BLACKOUT ");
+            printf("current energy is %d\nSimulation terimated due to blackout\n",
+               shmemory->stat.energy_produced - shmemory->stat.energy_consumed);
+            break;
+        case 3:
+            printf("------------------ EXPLODE ");
+            printstat(shmemory->conf.semId);
+            break;
+        default:
+            break;
+    }
+    if(kill(alimentator_process, SIGTERM) == -1) {
+        printf("Error to kill alimentator\n");
+    }
+
+    if(kill(activator_process, SIGTERM) == -1) {
+        printf("Error to kill activator\n");
+    }
+    
+    // while(wait( &status) != -1) {
+    //     printf("SONO WHILE_ %d\n", errno);
     // }
-    // } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
-    //     waitprocess(alimentator_process);
-    //     printf("------------------ EXPLODE ");
-    //     printstat(shmemory->conf.semId);
-    //     clean_all(shmemory->conf.memconf_id);
-    //     exit(EXIT_SUCCESS);
-    // }
+    // increment_sem(shmemory->conf.semId, STATE_SEM);
+    clean_all(shmemory->conf.memconf_id);
+    exit(EXIT_SUCCESS);
+
 }

@@ -23,14 +23,14 @@ void nsleep(long step) {
 void wait_mutex(int sem_id, unsigned short sem_num) {
   struct sembuf sops = {sem_num, -1, 0};
   if(semop(sem_id, &sops, 1) == -1) {
-    printf("Error: Semaphore %d\n", errno);
+    printf("Error: wait mutex %d\n", errno);
   }
 }
 
 void increment_sem(int sem_id, unsigned short sem_num) {
   struct sembuf sops = {sem_num, 1, 0};
   if(semop(sem_id, &sops, 1) == -1) {
-    printf("Error: Semaphore %d\n", errno);
+    printf("Error:  in increment_sem  %d\n", errno);
   }
 }
 

@@ -3,7 +3,7 @@
 long N_ATOM;
 
 struct msg msgq;
-
+sigset_t mask1;
 int main(int argc, char * argv[]) {
     struct sembuf sops;
     sigset_t mask;
@@ -15,6 +15,7 @@ int main(int argc, char * argv[]) {
     
     if((signal(SIGUSR1, signal_handler) == SIG_ERR) || (signal(SIGTERM, signal_handler) == SIG_ERR)) {
         printf("NON posso.\n");
+        exit(EXIT_FAILURE);
     }
     
     if((shmemory = shmat(atoi(argv[1]), NULL, 0)) == NULL) {
@@ -29,11 +30,13 @@ int main(int argc, char * argv[]) {
         printf("Error in msgsnd %d\n", errno);
     }
     N_ATOM = atoi(argv[2]);
-    printf("Il mio num. atomico (ATOMO PADRE): %ld PID: %d\n", N_ATOM, getpid());
+    // printf("Il mio num. atomico (ATOMO PADRE): %ld PID: %d\n", N_ATOM, getpid());
 
     sigemptyset (&mask);
     sigaddset(&mask, SIGUSR1);
     sigprocmask(SIG_UNBLOCK, &mask, NULL);
+    
+    
 
     while(1) {
         pause();
@@ -50,7 +53,7 @@ void signal_handler(int signum) {
 }
 
 void expiration() {
-    printf("N_ATOM MINORE O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
+    // printf("N_ATOM MINORE O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
     msgq.mtype = 2;
     if(msgsnd(shmemory->conf.msgId, &msgq, sizeof(int), 0) == -1) {
         printf("Error: in send atomic value.\n");
@@ -64,10 +67,6 @@ void expiration() {
 
 
 void waitchild() {
-    int child_status;
-    while (wait(&child_status) != -1) {
-        printf("atom waited a child atom\n");
-    }
     exit(EXIT_SUCCESS);
 }
 
@@ -83,8 +82,8 @@ void scission() {
     shmemory->stat.energy_produced+=energy;
     shmemory->stat.num_scissions++;
     increment_sem(shmemory->conf.semId, STATE_SEM);
-    printf("Il mio nuovo num. atomico (ATOMO PADRE) PID: %d N_ATOMICO: %ld\n", getpid(), N_ATOM);
-    printf("Il mio nuovo num. atomico (ATOMO FIGLIO) N_ATOMICO: %ld\n",n_atom_child);
+    // printf("Il mio nuovo num. atomico (ATOMO PADRE) PID: %d N_ATOMICO: %ld\n", getpid(), N_ATOM);
+    // printf("Il mio nuovo num. atomico (ATOMO FIGLIO) N_ATOMICO: %ld\n",n_atom_child);
     
     sprintf(n_atom_child_ch,"%ld", n_atom_child);
     sprintf(mem_str, "%d", shmemory->conf.memconf_id);

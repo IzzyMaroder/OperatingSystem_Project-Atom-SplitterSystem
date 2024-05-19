@@ -55,18 +55,9 @@ int sem_init(int sem_num){
 }
 
 void printstat(int sem_id) {
-    // wait_mutex(sem_id, STATE_SEM);
     printf("---------------------------------------------\n");
     printf("SCORIES: %d\n",shmemory->stat.num_scories);
     printf("ENERGY PRODUCED: %d\n",shmemory->stat.energy_produced);
+    printf("ENERGY CONSUMED: %d\n",shmemory->stat.energy_consumed);
     printf("NUMBER OF SCISSIONS: %d\n",shmemory->stat.num_scissions);
-    // increment_sem(sem_id, STATE_SEM);
-}
-
-void waitprocess(int process) {
-    int status;
-    kill(process ,SIGTERM);
-    while (wait(&status) != -1) {
-        printf("Child terminated correctly\n");
-    }
 }

@@ -6,6 +6,8 @@ tuple *tuplepid;
 
 void signal_handler() {
   notifyatom(counter);
+  free(tuplepid);
+  exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char * argv[]) {
@@ -44,39 +46,38 @@ void do_scission() {
         }
         tuplepid = temp;
       }
-      printf("PID: %d, MTYPE: %ld\n", msgqueu.pid, msgqueu.mtype);
       tuplepid[counter].pid = msgqueu.pid;
       tuplepid[counter].alive = true;
       counter++;
-      printf("COUNTER: %d\n", counter);
     }
     if ((msgrcv(shmemory->conf.msgId, &msgqueu, sizeof(int), 2, IPC_NOWAIT) != -1)) {
       for (int i = 0; i < counter; i++) {
         if (tuplepid[i].pid == msgqueu.pid) {
           tuplepid[i].alive = false;
           dead++;
-          printf("DEAD: %d\n", dead);
         }
       }
     } else {
       atom = rand() % counter;
       if (tuplepid[atom].alive == true) {
         kill(tuplepid[atom].pid, SIGUSR1);
-        printf("PID: %d ALIVE: %d INVIO SEGNALE.\n", tuplepid[atom].pid, tuplepid[atom].alive);
+        // printf("PID: %d ALIVE: %d INVIO SEGNALE.\n", tuplepid[atom].pid, tuplepid[atom].alive);
       }
     }
 
     if (dead == counter) {
         notifyatom(counter);
-        free(tuplepid);
-        exit(EXIT_SUCCESS);
     }
   }
 }
 
 void notifyatom(int counter) {
-  int status;
   for (int j = 0; j < counter; j++) {
-    kill(tuplepid[j].pid, SIGTERM);
+    if(tuplepid[j].alive == true) {
+      if (kill(tuplepid[j].pid, SIGTERM) == -1) {
+          printf("ERROR: cannot send signal (ACTIVATOR) %d\n", errno);
+          exit(EXIT_FAILURE);
+      }
+    }
   }
 }
