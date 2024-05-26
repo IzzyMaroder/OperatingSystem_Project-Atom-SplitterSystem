@@ -16,5 +16,5 @@
 #include <stdbool.h>
 #include "./lib/sharedmemory/sharedmemory.h"
 #include "./lib/general_lib/general.h"
-
+#include <signal.h>
 extern struct shm *shmemory;
