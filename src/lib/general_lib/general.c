@@ -1,4 +1,6 @@
 #include "../../common.h"
+#include <signal.h>
+#include <unistd.h>
 
 struct shm * shmemory;
 
@@ -43,8 +45,7 @@ int create_atoms(char * memid_str, char * a_rand) {
 		argq[3] = NULL;
 		switch(cpids = fork()) {
 			case -1:
-				fprintf(stderr,"Error: failed to fork.\n");
-				clean_all(shmemory->conf.memconf_id);
+        kill(shmemory->conf.masterpid, SIGUSR2);
         exit(EXIT_FAILURE);
 			case 0:
 				if(execve(ATOMO_NAME, argq, NULL) == -1) {
@@ -72,7 +73,6 @@ int create_process(char * memid_str, char * name) {
         break;
     case -1:
         printf("Error: falied fork to create alimentator process\n");
-        clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     default:
         break;

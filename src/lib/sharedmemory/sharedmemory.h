@@ -8,7 +8,8 @@ struct shmConf {
     int memstat_id;
     int semId;
     int msgId;
-    
+    int masterpid;
+
     long conf_min_atom, energy_demand;
     long conf_n_atomi_init;
     long conf_step_attivatore;

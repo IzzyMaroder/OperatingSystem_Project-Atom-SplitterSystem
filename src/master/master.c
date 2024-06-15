@@ -3,22 +3,29 @@
 
 int count_alarm, alimentator_process, activator_process;
 
-void signal_handler() {
+void signal_handler(int signum) {
     wait_mutex(shmemory->conf.semId, STATE_SEM);
     master_op();
 
-    if(count_alarm >= SIM_DURATION) {
-        termination(1);
+    if(signum == SIGUSR2) {
+        // fork failed
+        printf("SIGUSR2\n");
+        termination(4);
         return;
+    } else {
+        if(count_alarm >= SIM_DURATION) {
+            termination(1);
+            return;
 
-    // } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
-    //     printf("SONO QUI\n");
-    //     termination(2);
-    //     return;
-    } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed > ENERGY_EXPLODE_THRESHOLD) {
-        termination(3);
-        return;
+        // } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
+        //     termination(2);
+        //     return;
+        } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed > ENERGY_EXPLODE_THRESHOLD) {
+            termination(3);
+            return;
+        }
     }
+    
     increment_sem(shmemory->conf.semId, STATE_SEM);
 }
 
@@ -44,12 +51,12 @@ int main() {
   
     alarm(1);
     signal(SIGALRM, signal_handler);
+    signal(SIGUSR2, signal_handler);
     semctl(shmemory->conf.semId,0,SETVAL, 0);
 
     while(1) {
         pause();
     }
-    printf("CIAOOO\n");
 }
 
 void simulation(char * memid_str) {
@@ -77,6 +84,7 @@ void confshm(int mem_id) {
     shmemory->conf.conf_n_nuovi_atomi = N_NUOVI_ATOMI;
     shmemory->conf.conf_step_alimentatore = STEP_ALIMENTATORE;
     shmemory->conf.energy_demand = ENERGY_DEMAND;
+    shmemory->conf.masterpid = getpid();
 }
 
 void master_op() {
@@ -85,22 +93,6 @@ void master_op() {
     shmemory->stat.energy_consumed+=shmemory->conf.energy_demand;
     alarm(1);
 }
-
-// void check_for_termination() {
-//     if(count_alarm >= SIM_DURATION) {
-//         termination(1);
-//         return;
-
-//     // } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
-//     //     printf("SONO QUI\n");
-//     //     termination(2);
-//     //     return;
-
-//     } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed > ENERGY_EXPLODE_THRESHOLD) {
-//         termination(3);
-//         return;
-//     }
-// }
 
 void termination(int term) {
     int status;
@@ -117,7 +109,11 @@ void termination(int term) {
             break;
         case 3:
             printf("------------------ EXPLODE ");
-            printstat(shmemory->conf.semId);
+            printf("current energy is %d greater than ENERGY_EXPLODE_THRESHOLD %ld\n",shmemory->stat.energy_produced - shmemory->stat.energy_consumed, ENERGY_EXPLODE_THRESHOLD);
+            break;
+        case 4:
+            printf("------------------ MELTDOWN ");
+            printf("current energy is %d greater than ENERGY_EXPLODE_THRESHOLD %ld\n",shmemory->stat.energy_produced - shmemory->stat.energy_consumed, ENERGY_EXPLODE_THRESHOLD);
             break;
         default:
             break;
@@ -130,9 +126,7 @@ void termination(int term) {
         printf("Error to kill activator\n");
     }
     
-    // while(wait( &status) != -1) {
-    //     printf("SONO WHILE_ %d\n", errno);
-    // }
+    // while(wait( &status) != -1) {}
     // increment_sem(shmemory->conf.semId, STATE_SEM);
     clean_all(shmemory->conf.memconf_id);
     exit(EXIT_SUCCESS);

@@ -23,11 +23,11 @@ int main(int argc, char * argv[]) {
         clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     }
-
+    semctl(shmemory->conf.semId,0,SETVAL, 0);
     msgq.mtype = 1;
     msgq.pid = getpid();
     if(msgsnd(shmemory->conf.msgId, &msgq, sizeof(int), 0) == -1) {
-        printf("Error in msgsnd %d\n", errno);
+        exit(0);
     }
     N_ATOM = atoi(argv[2]);
     // printf("Il mio num. atomico (ATOMO PADRE): %ld PID: %d\n", N_ATOM, getpid());
@@ -45,7 +45,6 @@ int main(int argc, char * argv[]) {
 
 void signal_handler(int signum) {
     if(signum == SIGUSR1) {
-        wait_mutex(shmemory->conf.semId, STATE_SEM);
         (N_ATOM <= shmemory->conf.conf_min_atom) ? expiration() : scission();
     } else if(signum == SIGTERM) {
         waitchild();
@@ -60,6 +59,7 @@ void expiration() {
         clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     }
+    wait_mutex(shmemory->conf.semId, STATE_SEM);
     shmemory->stat.num_scories++;
     increment_sem(shmemory->conf.semId, STATE_SEM);
     waitchild();
@@ -79,6 +79,7 @@ void scission() {
     N_ATOM-=n_atom_child;
 
     int energy = N_ATOM * n_atom_child - ((N_ATOM > n_atom_child) ? N_ATOM : n_atom_child);
+    wait_mutex(shmemory->conf.semId, STATE_SEM);
     shmemory->stat.energy_produced+=energy;
     shmemory->stat.num_scissions++;
     increment_sem(shmemory->conf.semId, STATE_SEM);
