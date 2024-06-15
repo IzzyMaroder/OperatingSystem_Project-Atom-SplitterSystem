@@ -46,7 +46,7 @@ int create_atoms(char * memid_str, char * a_rand) {
 		switch(cpids = fork()) {
 			case -1:
         kill(shmemory->conf.masterpid, SIGUSR2);
-        exit(EXIT_FAILURE);
+        return cpids;
 			case 0:
 				if(execve(ATOMO_NAME, argq, NULL) == -1) {
 					perror("Error: failed to launch 'atomo'.\n");

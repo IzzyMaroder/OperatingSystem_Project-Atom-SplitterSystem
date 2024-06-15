@@ -9,6 +9,10 @@ void signal_handler(int signum) {
 
     if(signum == SIGUSR2) {
         // fork failed
+        sigset_t mask;
+        sigemptyset (&mask);
+        sigaddset(&mask, SIGUSR2);
+        sigprocmask(SIG_BLOCK, &mask, NULL);
         printf("SIGUSR2\n");
         termination(4);
         return;
@@ -126,7 +130,7 @@ void termination(int term) {
         printf("Error to kill activator\n");
     }
     
-    // while(wait( &status) != -1) {}
+    while(wait( &status) != -1) {}
     // increment_sem(shmemory->conf.semId, STATE_SEM);
     clean_all(shmemory->conf.memconf_id);
     exit(EXIT_SUCCESS);

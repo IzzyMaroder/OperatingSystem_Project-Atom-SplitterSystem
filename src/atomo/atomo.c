@@ -1,4 +1,5 @@
 #include "atomo.h"
+#include <stdio.h>
 
 long N_ATOM;
 
@@ -13,7 +14,7 @@ int main(int argc, char * argv[]) {
         exit(EXIT_FAILURE);
     }
     
-    if((signal(SIGUSR1, signal_handler) == SIG_ERR) || (signal(SIGTERM, signal_handler) == SIG_ERR)) {
+    if((signal(SIGUSR1, signal_handler) == SIG_ERR) || signal(SIGTERM, signal_handler) == SIG_ERR) {
         printf("NON posso.\n");
         exit(EXIT_FAILURE);
     }
@@ -23,7 +24,7 @@ int main(int argc, char * argv[]) {
         clean_all(shmemory->conf.memconf_id);
         exit(EXIT_FAILURE);
     }
-    semctl(shmemory->conf.semId,0,SETVAL, 0);
+    
     msgq.mtype = 1;
     msgq.pid = getpid();
     if(msgsnd(shmemory->conf.msgId, &msgq, sizeof(int), 0) == -1) {
@@ -89,5 +90,7 @@ void scission() {
     sprintf(n_atom_child_ch,"%ld", n_atom_child);
     sprintf(mem_str, "%d", shmemory->conf.memconf_id);
 
-    create_atoms(mem_str, n_atom_child_ch);
+    if(create_atoms(mem_str, n_atom_child_ch) == -1){
+        pause();
+    }
 }

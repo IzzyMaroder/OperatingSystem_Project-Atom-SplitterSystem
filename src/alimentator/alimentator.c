@@ -1,25 +1,12 @@
 #include "alimentator.h"
+#include <unistd.h>
 
 int *atompid;
 int counter;
 
-void notifyatom(int counter) {
-    int status;
-    for (int j = 0; j < counter; j++) {
-        if(kill(atompid[j], 0) == 0) {
-            if(kill(atompid[j], SIGTERM) == -1) {
-                printf("Error cannot send signal (ALIM) %d\n", errno);
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
-    free(atompid);
-    exit(EXIT_SUCCESS);
-}
-
 
 void signal_handler() {
-    notifyatom(counter);
+    
 }
 
 int main(int argc, char * argv[]){    
@@ -28,7 +15,6 @@ int main(int argc, char * argv[]){
         exit(EXIT_FAILURE);
     }
 
-    signal(SIGTERM, signal_handler);
 
     shmemory = shmat(atoi(argv[1]), NULL, 0);
     if(shmemory  == NULL) {
@@ -50,6 +36,9 @@ void insert() {
         for (i = 0; i < shmemory->conf.conf_n_nuovi_atomi; i++) {
             sprintf(a_rand, "%ld", (rand()%shmemory->conf.conf_n_atom_max+1) );
             atompid[i] = create_atoms(memid_str, a_rand);
+            if (atompid[i] == -1) {
+                pause();
+            }
         }
     }
 }
