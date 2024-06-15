@@ -46,6 +46,9 @@ int main(int argc, char * argv[]) {
 
 void signal_handler(int signum) {
     if(signum == SIGUSR1) {
+        wait_mutex(shmemory->conf.semId, STATE_SEM);
+        shmemory->stat.num_activations++;
+        increment_sem(shmemory->conf.semId, STATE_SEM);
         (N_ATOM <= shmemory->conf.conf_min_atom) ? expiration() : scission();
     } else if(signum == SIGTERM) {
         waitchild();

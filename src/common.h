@@ -17,4 +17,5 @@
 #include "./lib/sharedmemory/sharedmemory.h"
 #include "./lib/general_lib/general.h"
 #include <signal.h>
+#include <string.h>
 extern struct shm *shmemory;

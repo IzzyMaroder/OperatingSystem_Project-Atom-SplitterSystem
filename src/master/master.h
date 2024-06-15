@@ -11,7 +11,7 @@ int mem_init();
 int msg_init();
 int sem_init(int sem_num);
 
-void printstat(int sem_id);
+void printstat(int sem_id,struct shmStat*);
 void simulation(char * memid_str);
 void confshm(int mem_id);
 void master_op();

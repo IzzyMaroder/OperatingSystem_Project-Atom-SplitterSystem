@@ -2,10 +2,12 @@
 
 
 int count_alarm, alimentator_process, activator_process;
+struct shmStat stat_snap;
 
 void signal_handler(int signum) {
     wait_mutex(shmemory->conf.semId, STATE_SEM);
     master_op();
+    memcpy(&stat_snap, &shmemory->stat, sizeof(struct shmStat));
 
     if(signum == SIGUSR2) {
         // fork failed
@@ -20,10 +22,9 @@ void signal_handler(int signum) {
         if(count_alarm >= SIM_DURATION) {
             termination(1);
             return;
-
-        // } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
-        //     termination(2);
-        //     return;
+        } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed < 0) {
+            termination(2);
+            return;
         } else if(shmemory->stat.energy_produced - shmemory->stat.energy_consumed > ENERGY_EXPLODE_THRESHOLD) {
             termination(3);
             return;
@@ -92,7 +93,7 @@ void confshm(int mem_id) {
 }
 
 void master_op() {
-    printstat(shmemory->conf.semId);
+    printstat(shmemory->conf.semId,&stat_snap);
     count_alarm++;
     shmemory->stat.energy_consumed+=shmemory->conf.energy_demand;
     alarm(1);
@@ -122,6 +123,7 @@ void termination(int term) {
         default:
             break;
     }
+
     if(kill(alimentator_process, SIGTERM) == -1) {
         printf("Error to kill alimentator\n");
     }

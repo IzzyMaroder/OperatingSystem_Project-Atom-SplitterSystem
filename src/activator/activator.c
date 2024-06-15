@@ -25,8 +25,7 @@ void signal_handler() {
       tuplepid[counter].alive = true;
       counter++;
     }
-    while ((msgrcv(shmemory->conf.msgId, &msgqueu, sizeof(int), 2,
-                   IPC_NOWAIT) != -1)) {
+    while ((msgrcv(shmemory->conf.msgId, &msgqueu, sizeof(int), 2, IPC_NOWAIT) != -1)) {
       for (int i = 0; i < counter; i++) {
         if (tuplepid[i].pid == msgqueu.pid) {
           tuplepid[i].alive = false;
