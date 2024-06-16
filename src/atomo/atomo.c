@@ -77,7 +77,7 @@ void waitchild() {
 
 void scission() {
     long n_atom_child;
-    char n_atom_child_ch[sizeof(int)], mem_str[3*sizeof(int)+1];
+    char n_atom_child_ch[2*sizeof(long)+1], mem_str[3*sizeof(int)+1];
 
     n_atom_child = rand() % ( N_ATOM - 1 )+ 1;
     N_ATOM-=n_atom_child;
