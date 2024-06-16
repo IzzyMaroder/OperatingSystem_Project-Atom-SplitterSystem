@@ -92,9 +92,9 @@ void confshm(int mem_id) {
 }
 
 void master_op() {
+    shmemory->stat.energy_consumed+=shmemory->conf.energy_demand;
     printstat(shmemory->conf.semId,&stat_snap);
     count_alarm++;
-    shmemory->stat.energy_consumed+=shmemory->conf.energy_demand;
     alarm(1);
 }
 
