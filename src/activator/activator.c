@@ -1,6 +1,4 @@
 #include "activator.h"
-#include <stdio.h>
-#include <unistd.h>
 
 long N_ATOMI_INIT;
 int counter = 0;
@@ -9,8 +7,7 @@ struct msg msgqueu;
 
 void signal_handler() {
   nsleep(99999999);
-  while (msgrcv(shmemory->conf.msgId, &msgqueu, sizeof(int), 1, IPC_NOWAIT) !=
-           -1) {
+  while (msgrcv(shmemory->conf.msgId, &msgqueu, sizeof(int), 1, IPC_NOWAIT) != -1) {
       if (counter >= (N_ATOMI_INIT)) {
         N_ATOMI_INIT *= 2;
         tuple *temp = realloc(tuplepid, N_ATOMI_INIT * sizeof(tuple));
@@ -32,9 +29,9 @@ void signal_handler() {
         }
       }
     }
-  notifyatom(counter);
-  free(tuplepid);
-  exit(EXIT_SUCCESS);
+    notifyatom(counter);
+    free(tuplepid);
+    exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[]) {
@@ -77,8 +74,7 @@ void do_scission() {
       tuplepid[counter].alive = true;
       counter++;
     }
-    while ((msgrcv(shmemory->conf.msgId, &msgqueu, sizeof(int), 2,
-                   IPC_NOWAIT) != -1)) {
+    while ((msgrcv(shmemory->conf.msgId, &msgqueu, sizeof(int), 2, IPC_NOWAIT) != -1)) {
       for (int i = 0; i < counter; i++) {
         if (tuplepid[i].pid == msgqueu.pid) {
           tuplepid[i].alive = false;
@@ -89,8 +85,6 @@ void do_scission() {
     atom = rand() % counter;
     if (tuplepid[atom].alive == true) {
       kill(tuplepid[atom].pid, SIGUSR1);
-      // printf("PID: %d ALIVE: %d INVIO SEGNALE.\n", tuplepid[atom].pid,
-      // tuplepid[atom].alive);
     }
   }
 

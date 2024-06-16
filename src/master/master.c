@@ -15,7 +15,6 @@ void signal_handler(int signum) {
         sigemptyset (&mask);
         sigaddset(&mask, SIGUSR2);
         sigprocmask(SIG_BLOCK, &mask, NULL);
-        printf("SIGUSR2\n");
         termination(4);
         return;
     } else {
@@ -117,8 +116,7 @@ void termination(int term) {
             printf("current energy is %d greater than ENERGY_EXPLODE_THRESHOLD %ld\n",shmemory->stat.energy_produced - shmemory->stat.energy_consumed, ENERGY_EXPLODE_THRESHOLD);
             break;
         case 4:
-            printf("------------------ MELTDOWN ");
-            printf("current energy is %d greater than ENERGY_EXPLODE_THRESHOLD %ld\n",shmemory->stat.energy_produced - shmemory->stat.energy_consumed, ENERGY_EXPLODE_THRESHOLD);
+            printf("------------------ MELTDOWN ------------------\n");
             break;
         default:
             break;
@@ -133,7 +131,6 @@ void termination(int term) {
     }
     
     while(wait( &status) != -1) {}
-    // increment_sem(shmemory->conf.semId, STATE_SEM);
     clean_all(shmemory->conf.memconf_id);
     exit(EXIT_SUCCESS);
 

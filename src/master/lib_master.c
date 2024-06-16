@@ -57,9 +57,9 @@ int sem_init(int sem_num){
 void printstat(int sem_id, struct shmStat* snap) {
     printf("---------------------------------------------\n");
     printf("SCORIES: %d, (%d)\n",shmemory->stat.num_scories,shmemory->stat.num_scories - snap->num_scories);
-    printf("ENERGY PRODUCED: %d\n",shmemory->stat.energy_produced);
-    printf("ENERGY CONSUMED: %d\n",shmemory->stat.energy_consumed);
-    printf("NUMBER OF SCISSIONS: %d\n",shmemory->stat.num_scissions);
-    printf("NUMBER OF ACTIVATION: %d\n",shmemory->stat.num_activations);
+    printf("ENERGY PRODUCED: %d, (%d)\n",shmemory->stat.energy_produced,shmemory->stat.energy_produced - snap->energy_produced);
+    printf("ENERGY CONSUMED: %d, (%d)\n",shmemory->stat.energy_consumed, shmemory->stat.energy_consumed - snap->energy_consumed);
+    printf("NUMBER OF SCISSIONS: %d, (%d)\n",shmemory->stat.num_scissions, shmemory->stat.num_scissions - snap->num_scissions);
+    printf("NUMBER OF ACTIVATION: %d, (%d)\n",shmemory->stat.num_activations,shmemory->stat.num_activations - snap->num_activations);
 
 }
