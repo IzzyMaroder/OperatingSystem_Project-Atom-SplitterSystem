@@ -44,7 +44,7 @@ int create_atoms(char * memid_str, char * a_rand) {
 		argq[2] = a_rand;
 		argq[3] = NULL;
     wait_mutex(shmemory->conf.semId, STATE_SEM);
-    shmemory->stat.n_atoms++;
+    shmemory->stat.n_ofatoms++;
     increment_sem(shmemory->conf.semId, STATE_SEM);
 		switch(cpids = fork()) {
 			case -1:

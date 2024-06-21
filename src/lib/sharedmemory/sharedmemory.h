@@ -20,7 +20,7 @@ struct shmConf {
 
 struct shmStat {
     int energy_produced, num_scories, num_scissions, 
-    num_activations, energy_consumed, energy_absorbed, n_atoms;
+    num_activations, energy_consumed, energy_absorbed, n_ofatoms, flags;
 };
 
 struct shm {

@@ -3,6 +3,7 @@
 #define STATE_SEM 1
 #define ATOMO_NAME "./atomo"
 #define ACTIVATOR_NAME "./activator"
+#define INHIBITOR_NAME "./inhibitor"
 #define ALIMENTATOR_NAME "./alimentator"
 
 void clean_all(int mem_id);

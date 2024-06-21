@@ -1,7 +1,7 @@
 #include "master.h"
 
 
-int count_alarm, alimentator_process, activator_process;
+int count_alarm, alimentator_process, activator_process, inhibitor_process;
 struct shmStat stat_snap;
 
 void signal_handler(int signum) {
@@ -68,7 +68,7 @@ void simulation(char * memid_str) {
 
     activator_process = create_process(memid_str, ACTIVATOR_NAME);
     alimentator_process = create_process(memid_str, ALIMENTATOR_NAME);
-
+    inhibitor_process = create_process(memid_str, INHIBITOR_NAME);
     for(int i  = 0; i < shmemory->conf.conf_n_atomi_init;  i++) {
         char a_rand[20];
 		sprintf(a_rand, "%ld", (rand()%shmemory->conf.conf_n_atom_max+1) );
@@ -89,6 +89,9 @@ void confshm(int mem_id) {
     shmemory->conf.conf_step_alimentatore = STEP_ALIMENTATORE;
     shmemory->conf.energy_demand = ENERGY_DEMAND;
     shmemory->conf.masterpid = getpid();
+    
+    shmemory->stat.flags = 0;
+
 }
 
 void master_op() {
@@ -116,7 +119,7 @@ void termination(int term) {
             printf("current energy is %d greater than ENERGY_EXPLODE_THRESHOLD %ld\n",shmemory->stat.energy_produced - shmemory->stat.energy_consumed, ENERGY_EXPLODE_THRESHOLD);
             break;
         case 4:
-            printf("------------------ MELTDOWN ------------------ (%d)\n", shmemory->stat.n_atoms);
+            printf("------------------ MELTDOWN ------------------ (%d)\n", shmemory->stat.n_ofatoms);
             break;
         default:
             break;
@@ -128,6 +131,10 @@ void termination(int term) {
 
     if(kill(activator_process, SIGTERM) == -1) {
         printf("Error to kill activator\n");
+    }
+    
+    if(kill(inhibitor_process, SIGTERM) == -1) {
+        printf("Error to kill inhibitor\n");
     }
     
     while(wait( &status) != -1) {}
