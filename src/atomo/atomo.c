@@ -74,22 +74,25 @@ void waitchild() {
 
 
 void scission() {
-    long n_atom_child;
-    char n_atom_child_ch[2*sizeof(long)+1], mem_str[3*sizeof(int)+1];
+    printf("FLGS %d\n", shmemory->stat.flags);
+    if(shmemory->stat.flags == 0) {
+        long n_atom_child;
+        char n_atom_child_ch[2*sizeof(long)+1], mem_str[3*sizeof(int)+1];
 
-    n_atom_child = rand() % ( N_ATOM - 1 )+ 1;
-    N_ATOM-=n_atom_child;
+        n_atom_child = rand() % ( N_ATOM - 1 )+ 1;
+        N_ATOM-=n_atom_child;
 
-    int energy = N_ATOM * n_atom_child - ((N_ATOM > n_atom_child) ? N_ATOM : n_atom_child);
-    wait_mutex(shmemory->conf.semId, STATE_SEM);
-    shmemory->stat.energy_produced+=energy;
-    shmemory->stat.num_scissions++;
-    increment_sem(shmemory->conf.semId, STATE_SEM);
-    
-    sprintf(n_atom_child_ch,"%ld", n_atom_child);
-    sprintf(mem_str, "%d", shmemory->conf.memconf_id);
+        int energy = N_ATOM * n_atom_child - ((N_ATOM > n_atom_child) ? N_ATOM : n_atom_child);
+        wait_mutex(shmemory->conf.semId, STATE_SEM);
+        shmemory->stat.energy_produced+=energy;
+        shmemory->stat.num_scissions++;
+        increment_sem(shmemory->conf.semId, STATE_SEM);
+        
+        sprintf(n_atom_child_ch,"%ld", n_atom_child);
+        sprintf(mem_str, "%d", shmemory->conf.memconf_id);
 
-    if(create_atoms(mem_str, n_atom_child_ch) == -1){
-        pause();
+        if(create_atoms(mem_str, n_atom_child_ch) == -1){
+            pause();
+        }
     }
 }
