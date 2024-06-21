@@ -116,7 +116,7 @@ void termination(int term) {
             printf("current energy is %d greater than ENERGY_EXPLODE_THRESHOLD %ld\n",shmemory->stat.energy_produced - shmemory->stat.energy_consumed, ENERGY_EXPLODE_THRESHOLD);
             break;
         case 4:
-            printf("------------------ MELTDOWN ------------------\n");
+            printf("------------------ MELTDOWN ------------------ (%d)\n", shmemory->stat.n_atoms);
             break;
         default:
             break;

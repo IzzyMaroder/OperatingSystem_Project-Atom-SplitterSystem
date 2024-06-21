@@ -31,7 +31,6 @@ int main(int argc, char * argv[]) {
         exit(0);
     }
     N_ATOM = atoi(argv[2]);
-    // printf("Il mio num. atomico (ATOMO PADRE): %ld PID: %d\n", N_ATOM, getpid());
 
     sigemptyset (&mask);
     sigaddset(&mask, SIGUSR1);
@@ -56,7 +55,6 @@ void signal_handler(int signum) {
 }
 
 void expiration() {
-    // printf("N_ATOM MINORE O UGUALE DI MIN_N_ATOMICO NOTIFICO. PID: %d\n", getpid());
     msgq.mtype = 2;
     if(msgsnd(shmemory->conf.msgId, &msgq, sizeof(int), 0) == -1) {
         printf("Error: in send atomic value.\n");
@@ -87,8 +85,6 @@ void scission() {
     shmemory->stat.energy_produced+=energy;
     shmemory->stat.num_scissions++;
     increment_sem(shmemory->conf.semId, STATE_SEM);
-    // printf("Il mio nuovo num. atomico (ATOMO PADRE) PID: %d N_ATOMICO: %ld\n", getpid(), N_ATOM);
-    // printf("Il mio nuovo num. atomico (ATOMO FIGLIO) N_ATOMICO: %ld\n",n_atom_child);
     
     sprintf(n_atom_child_ch,"%ld", n_atom_child);
     sprintf(mem_str, "%d", shmemory->conf.memconf_id);
