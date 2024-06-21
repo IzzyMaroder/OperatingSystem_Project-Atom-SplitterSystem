@@ -18,13 +18,15 @@ void signal_handler() {
 }
 
 void doscission() {
-    int thresh = 600, tot_atoms = 9000;
-    int nscission = rand() % ((shmemory->stat.n_ofatoms - shmemory->stat.num_scories) - tot_atoms);
-    printf("nscission %d\n", nscission);
-    if(nscission > thresh) {
-        wait_mutex(shmemory->conf.semId, STATE_SEM);
-        shmemory->stat.flags = 1;
-        increment_sem(shmemory->conf.semId, STATE_SEM);
+    while(1){
+        int thresh = 600, tot_atoms = 9000;
+        int nscission = rand() % (tot_atoms - (shmemory->stat.n_ofatoms - shmemory->stat.num_scories));
+        printf("nscission %d\n", nscission);
+        if(nscission > thresh) {
+            wait_mutex(shmemory->conf.semId, STATE_SEM);
+            shmemory->stat.flags = 1;
+            increment_sem(shmemory->conf.semId, STATE_SEM);
+        }
     }
 }
 
