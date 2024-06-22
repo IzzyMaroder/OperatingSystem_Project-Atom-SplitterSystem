@@ -89,7 +89,8 @@ void confshm(int mem_id) {
     shmemory->conf.conf_step_alimentatore = STEP_ALIMENTATORE;
     shmemory->conf.energy_demand = ENERGY_DEMAND;
     shmemory->conf.masterpid = getpid();
-    
+    shmemory->conf.conf_energy_thresh = ENERGY_EXPLODE_THRESHOLD;
+
     shmemory->stat.flags = 0;
 
 }

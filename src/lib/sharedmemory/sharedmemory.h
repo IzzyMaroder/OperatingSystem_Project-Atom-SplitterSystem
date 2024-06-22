@@ -16,6 +16,7 @@ struct shmConf {
     long conf_n_atom_max;
     long conf_n_nuovi_atomi;
     long conf_step_alimentatore;
+    long conf_energy_thresh;
 };
 
 struct shmStat {

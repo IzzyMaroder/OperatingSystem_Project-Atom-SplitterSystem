@@ -1,6 +1,5 @@
 #include "inhibitor.h"
 
-
 int main(int argc, char *argv[]) {
 
     if((shmemory = shmat(atoi(argv[1]), NULL, 0)) == NULL) {
@@ -24,8 +23,8 @@ void doscission() {
             shmemory->stat.flags = 1;
             increment_sem(shmemory->conf.semId, STATE_SEM);
         } else {
-            printf(" ENERGY %ld\n", ENERGY_EXPLODE_THRESHOLD);
-            int excess_energy = (shmemory->stat.energy_produced - shmemory->stat.energy_consumed) - ENERGY_EXPLODE_THRESHOLD;
+            printf(" ENERGY %ld\n", shmemory->conf.conf_energy_thresh);
+            int excess_energy = (shmemory->stat.energy_produced - shmemory->stat.energy_consumed) - shmemory->conf.conf_energy_thresh;
             wait_mutex(shmemory->conf.semId, STATE_SEM);
             shmemory->stat.energy_to_remove = (excess_energy / (shmemory->stat.energy_produced - shmemory->stat.energy_consumed));
             shmemory->stat.flags = 0;
