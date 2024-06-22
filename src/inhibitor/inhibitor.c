@@ -22,7 +22,7 @@ void doscission() {
         int thresh = 500, tot_atoms = 9000;
         int nscission = rand() % (tot_atoms - shmemory->stat.n_ofatoms);
         // printf("nscission %d\n", nscission);
-        if(nscission > thresh) {
+        if(nscission < thresh) {
             wait_mutex(shmemory->conf.semId, STATE_SEM);
             shmemory->stat.flags = 1;
             increment_sem(shmemory->conf.semId, STATE_SEM);
