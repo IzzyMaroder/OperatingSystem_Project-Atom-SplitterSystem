@@ -32,12 +32,14 @@ void insert() {
 
     while(1) {
         nsleep(shmemory->conf.conf_step_alimentatore);
-        counter+=shmemory->conf.conf_n_atomi_init;
-        for (i = 0; i < shmemory->conf.conf_n_nuovi_atomi; i++) {
-            sprintf(a_rand, "%ld", (rand()%shmemory->conf.conf_n_atom_max+1) );
-            atompid[i] = create_atoms(memid_str, a_rand);
-            if (atompid[i] == -1) {
-                pause();
+        if(shmemory->stat.flags == 0){
+            counter+=shmemory->conf.conf_n_atomi_init;
+            for (i = 0; i < shmemory->conf.conf_n_nuovi_atomi; i++) {
+                sprintf(a_rand, "%ld", (rand()%shmemory->conf.conf_n_atom_max+1) );
+                atompid[i] = create_atoms(memid_str, a_rand);
+                if (atompid[i] == -1) {
+                    pause();
+                }
             }
         }
     }

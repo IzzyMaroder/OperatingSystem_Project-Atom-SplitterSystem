@@ -19,7 +19,6 @@ void signal_handler() {
 
 void doscission() {
     while(1){
-        sleep(3);
         int thresh = 500, tot_atoms = 9000;
         int nscission = rand() % (tot_atoms - shmemory->stat.n_ofatoms);
         // printf("nscission %d\n", nscission);
