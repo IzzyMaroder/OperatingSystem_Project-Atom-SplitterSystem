@@ -74,7 +74,6 @@ void waitchild() {
 
 
 void scission() {
-    printf("FLGS %d\n", shmemory->stat.flags);
     if(shmemory->stat.flags == 0) {
         long n_atom_child;
         char n_atom_child_ch[2*sizeof(long)+1], mem_str[3*sizeof(int)+1];
