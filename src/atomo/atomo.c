@@ -77,22 +77,24 @@ void scission() {
     if(shmemory->stat.flags == 0) {
         long n_atom_child;
         char n_atom_child_ch[2*sizeof(long)+1], mem_str[3*sizeof(int)+1];
-        int temp_absorbed;
+        double temp_absorbed;
 
         n_atom_child = rand() % ( N_ATOM - 1 )+ 1;
         N_ATOM-=n_atom_child;
 
         int energy = N_ATOM * n_atom_child - ((N_ATOM > n_atom_child) ? N_ATOM : n_atom_child);
-        wait_mutex(shmemory->conf.semId, STATE_SEM);
-        shmemory->stat.energy_produced+=energy;
-        shmemory->stat.num_scissions++;
         
-        temp_absorbed = (shmemory->stat.energy_produced) * (shmemory->stat.energy_to_remove / 100 );
+        temp_absorbed = (energy) * (shmemory->stat.energy_to_remove / 100 );
+        //printf("TEMP ABSO %f TEMP ENERGY%d\n", temp_absorbed, energy);
+
+        wait_mutex(shmemory->conf.semId, STATE_SEM);
         shmemory->stat.energy_absorbed+=temp_absorbed;
 
-        shmemory->stat.energy_produced-=shmemory->stat.energy_absorbed;
-        printf("PRODUCED %d  ABSORBED %d\n",shmemory->stat.energy_produced, shmemory->stat.energy_absorbed);
+        energy-=shmemory->stat.energy_absorbed;
+        //printf("PRODUCED %d  ABSORBED %d\n",energy, shmemory->stat.energy_absorbed);
         
+        shmemory->stat.energy_produced+=energy;
+        shmemory->stat.num_scissions++;
         increment_sem(shmemory->conf.semId, STATE_SEM);
         
         sprintf(n_atom_child_ch,"%ld", n_atom_child);
