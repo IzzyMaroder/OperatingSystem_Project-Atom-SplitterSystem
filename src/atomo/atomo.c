@@ -90,7 +90,7 @@ void scission() {
         wait_mutex(shmemory->conf.semId, STATE_SEM);
         shmemory->stat.energy_absorbed+=temp_absorbed;
 
-        energy-=shmemory->stat.energy_absorbed;
+        energy-=temp_absorbed;
         //printf("PRODUCED %d  ABSORBED %d\n",energy, shmemory->stat.energy_absorbed);
         
         shmemory->stat.energy_produced+=energy;
