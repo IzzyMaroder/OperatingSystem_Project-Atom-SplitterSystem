@@ -27,11 +27,11 @@ void doscission() {
             increment_sem(shmemory->conf.semId, STATE_SEM);
         } else {
             //Energia fino a questo momento
-            double delta_energy_th = shmemory->conf.conf_energy_thresh - TOLLERANCE;
+            double delta_energy_th = shmemory->conf.conf_energy_thresh - (shmemory->stat.energy_produced - shmemory->stat.energy_consumed);
             //printf(" SONO QUIIIIII %d, PRODOTT %d\n", excess_energy, (shmemory->stat.energy_produced - shmemory->stat.energy_consumed));
             wait_mutex(shmemory->conf.semId, STATE_SEM);
             shmemory->stat.flags = 0;
-            shmemory->stat.energy_to_remove = (delta_energy_th / ((shmemory->stat.energy_produced - shmemory->stat.energy_consumed) + TOLLERANCE));
+            shmemory->stat.energy_to_remove = ((shmemory->stat.energy_produced - shmemory->stat.energy_consumed) / delta_energy_th);
             printf("REMOVE %f\n", shmemory->stat.energy_to_remove);
             increment_sem(shmemory->conf.semId, STATE_SEM);
         }
