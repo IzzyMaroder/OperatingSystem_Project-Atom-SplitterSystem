@@ -60,6 +60,7 @@ int main() {
     alarm(1);
     signal(SIGALRM, signal_handler);
     signal(SIGUSR2, signal_handler);
+    signal(SIGCONT, signal_handler);
     semctl(shmemory->conf.semId,0,SETVAL, 0);
 
     while(1) {
