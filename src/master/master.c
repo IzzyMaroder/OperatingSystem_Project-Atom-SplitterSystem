@@ -12,10 +12,15 @@ void signal_handler(int signum) {
     if(signum == SIGCONT) {
         printf("PRIMA %d\n", shmemory->stat.stop_inhi); 
         if(shmemory->stat.stop_inhi == 0) {
+            wait_mutex(shmemory->conf.semId, STATE_SEM);
             shmemory->stat.stop_inhi = 1;
             shmemory->stat.flags = 0;
+            increment_sem(shmemory->conf.semId, STATE_SEM);
+
         } else {
+            wait_mutex(shmemory->conf.semId, STATE_SEM);
             shmemory->stat.stop_inhi = 0;
+            increment_sem(shmemory->conf.semId, STATE_SEM);
         }
         printf("DOPO %d\n", shmemory->stat.stop_inhi);
         
