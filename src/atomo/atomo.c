@@ -84,7 +84,7 @@ void scission() {
 
         int energy = N_ATOM * n_atom_child - ((N_ATOM > n_atom_child) ? N_ATOM : n_atom_child);
         
-        temp_absorbed = (energy) * (shmemory->stat.energy_to_remove / 100 );
+        temp_absorbed = (energy) * (shmemory->stat.energy_to_remove);
         //printf("TEMP ABSO %f TEMP ENERGY%d\n", temp_absorbed, energy);
 
         wait_mutex(shmemory->conf.semId, STATE_SEM);
