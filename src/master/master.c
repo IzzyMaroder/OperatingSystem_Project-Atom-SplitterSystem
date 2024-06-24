@@ -10,7 +10,10 @@ void signal_handler(int signum) {
     memcpy(&stat_snap, &shmemory->stat, sizeof(struct shmStat));
 
     if(signum == SIGCONT) {
-        shmemory->stat.stop_inhi = 0;
+        printf("PRIMA %d\n", shmemory->stat.stop_inhi);
+        shmemory->stat.stop_inhi = 0 ? shmemory->stat.stop_inhi = 1 : 0;
+        printf("DOPO %d\n", shmemory->stat.stop_inhi);
+        
     }
 
     if(signum == SIGUSR2) {
