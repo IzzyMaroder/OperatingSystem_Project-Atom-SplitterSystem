@@ -9,6 +9,10 @@ void signal_handler(int signum) {
     master_op();
     memcpy(&stat_snap, &shmemory->stat, sizeof(struct shmStat));
 
+    if(signum == SIGCONT) {
+        printf("CIAOOO\n");
+    }
+
     if(signum == SIGUSR2) {
         // fork failed
         sigset_t mask;

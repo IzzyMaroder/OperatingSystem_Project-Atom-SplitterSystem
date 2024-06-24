@@ -1,7 +1,5 @@
 #include "inhibitor.h"
 
-#define TOLLERANCE (shmemory->conf.conf_energy_thresh / 100)
-
 int main(int argc, char *argv[]) {
 
     if((shmemory = shmat(atoi(argv[1]), NULL, 0)) == NULL) {
@@ -29,10 +27,9 @@ void doscission() {
             //Energia fino a questo momento
             double current_energy = (shmemory->stat.energy_produced - shmemory->stat.energy_consumed);
             double energy_to_remove = current_energy/(shmemory->conf.conf_energy_thresh - current_energy);
-            if(energy_to_remove<0){
+            if(energy_to_remove < 0){
                 energy_to_remove *= (-1);
             }
-            //printf(" SONO QUIIIIII %d, PRODOTT %d\n", excess_energy, (shmemory->stat.energy_produced - shmemory->stat.energy_consumed));
             wait_mutex(shmemory->conf.semId, STATE_SEM);
             shmemory->stat.flags = 0;
 
