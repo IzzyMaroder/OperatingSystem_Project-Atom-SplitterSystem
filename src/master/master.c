@@ -10,7 +10,7 @@ void signal_handler(int signum) {
     memcpy(&stat_snap, &shmemory->stat, sizeof(struct shmStat));
 
     if(signum == SIGCONT) {
-        printf("CIAOOO\n");
+        shmemory->stat.stop_inhi = 0;
     }
 
     if(signum == SIGUSR2) {
@@ -97,6 +97,8 @@ void confshm(int mem_id) {
     shmemory->conf.conf_energy_thresh = ENERGY_EXPLODE_THRESHOLD;
 
     shmemory->stat.flags = 0;
+    // Default 1
+    shmemory->stat.stop_inhi = 1;
 
 }
 
