@@ -39,6 +39,5 @@ void doscission() {
                 increment_sem(shmemory->conf.semId, STATE_SEM);
             }
         }
-        increment_sem(shmemory->conf.semId, STATE_SEM);
     }
 }
