@@ -13,6 +13,7 @@ void signal_handler(int signum) {
         printf("PRIMA %d\n", shmemory->stat.stop_inhi); 
         if(shmemory->stat.stop_inhi == 0) {
             shmemory->stat.stop_inhi = 1;
+            shmemory->stat.flags = 0;
         } else {
             shmemory->stat.stop_inhi = 0;
         }
