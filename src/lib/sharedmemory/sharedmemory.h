@@ -21,9 +21,9 @@ struct shmConf {
 
 struct shmStat {
     int energy_produced, num_scories, num_scissions, 
-    num_activations, energy_consumed, energy_absorbed, n_ofatoms, flags, stop_inhi;
+    num_activations, energy_consumed, n_ofatoms, flags, stop_inhi;
 
-    double energy_to_remove;
+    double energy_to_remove, energy_absorbed;
 };
 
 struct shm {
