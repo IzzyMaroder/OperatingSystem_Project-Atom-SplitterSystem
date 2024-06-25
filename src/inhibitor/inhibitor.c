@@ -32,7 +32,7 @@ void doscission() {
                     energy_to_remove *= (-1);
                 }
                 wait_mutex(shmemory->conf.semId, STATE_SEM);
-                printf("SONO DENTRO \n");
+                //printf("SONO DENTRO \n");
                 shmemory->stat.flags = 0;
 
                 shmemory->stat.energy_to_remove = energy_to_remove;
