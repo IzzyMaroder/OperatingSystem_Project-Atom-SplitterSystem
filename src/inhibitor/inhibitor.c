@@ -27,15 +27,15 @@ void doscission() {
             } else {
                 //Energia fino a questo momento
                 double current_energy = (shmemory->stat.energy_produced - shmemory->stat.energy_consumed);
-                double energy_to_remove = current_energy/(shmemory->conf.conf_energy_thresh - current_energy);
+                double energy_to_remove = current_energy / (shmemory->conf.conf_energy_thresh - current_energy);
                 if(energy_to_remove < 0){
                     energy_to_remove *= (-1);
                 }
                 wait_mutex(shmemory->conf.semId, STATE_SEM);
-                //printf("SONO DENTRO \n");
                 shmemory->stat.flags = 0;
-
                 shmemory->stat.energy_to_remove = energy_to_remove;
+                printf("SONO DENTRO %f\n",shmemory->stat.energy_to_remove);
+                
                 increment_sem(shmemory->conf.semId, STATE_SEM);
             }
         }
