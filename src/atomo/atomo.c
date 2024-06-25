@@ -91,7 +91,7 @@ void scission() {
         shmemory->stat.energy_absorbed+=temp_absorbed;
 
         energy-=temp_absorbed;
-        //printf("PRODUCED %d  ABSORBED %d\n",energy, shmemory->stat.energy_absorbed);
+        printf("ABSORBEDDDD %d\n",shmemory->stat.energy_absorbed);
         
         shmemory->stat.energy_produced+=energy;
         shmemory->stat.num_scissions++;
