@@ -85,13 +85,11 @@ void scission() {
         int energy = N_ATOM * n_atom_child - ((N_ATOM > n_atom_child) ? N_ATOM : n_atom_child);
         
         temp_absorbed = (energy) * (shmemory->stat.energy_to_remove);
-        printf("TEMP ABSO %f TEMP ENERGY%d\n", temp_absorbed, energy);
 
         wait_mutex(shmemory->conf.semId, STATE_SEM);
         
         shmemory->stat.energy_absorbed+=temp_absorbed;
         energy-=temp_absorbed;
-        printf("ABSORBEDDDD %f\n",shmemory->stat.energy_absorbed);
         shmemory->stat.energy_produced+=energy;
         shmemory->stat.num_scissions++;
         increment_sem(shmemory->conf.semId, STATE_SEM);
