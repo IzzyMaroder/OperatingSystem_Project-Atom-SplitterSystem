@@ -18,6 +18,7 @@ void doscission() {
     while(1){
         nsleep(99999999);
         if(shmemory->stat.stop_inhi == 0) {
+            printf("FLAGSSS %d\n", shmemory->stat.flags);
             int thresh = 500, tot_atoms = 9000;
             int nscission = rand() % (tot_atoms - shmemory->stat.n_ofatoms);
             if(nscission < thresh) {
