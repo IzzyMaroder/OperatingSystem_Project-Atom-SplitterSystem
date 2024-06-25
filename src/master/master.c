@@ -107,7 +107,7 @@ void confshm(int mem_id) {
 
     shmemory->stat.flags = 0;
     // Default 1
-    shmemory->stat.stop_inhi = 1;
+    shmemory->stat.stop_inhi = 0;
 
 }
 
