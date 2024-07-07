@@ -5,10 +5,6 @@ int *atompid;
 int counter;
 
 
-void signal_handler() {
-    
-}
-
 int main(int argc, char * argv[]){    
     if(argc < 2) {
         fprintf(stderr, "Error: too/many arguments alimentator.\n");
